@@ -1,0 +1,37 @@
+.dixit-logo {
+  width: 165px;
+  height: 40px;
+  background-color: #AEAF7A;
+  border-radius: 30px;
+
+  .font {
+    font-family: Roboto, sans-serif;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 36px;
+    line-height: 40px;
+    letter-spacing: 5px;
+    text-align: center;
+  }
+
+  .indigo {
+    @extend .font;
+    color: #3A0088;
+  }
+
+  .violet {
+    @extend .font;
+    color: #930077;
+  }
+
+  .red {
+    @extend .font;
+    color: #E61C5D;
+  }
+
+  .yellow {
+    @extend .font;
+    color: #FFBD39;
+  }
+
+}
