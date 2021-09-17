@@ -1,7 +1,12 @@
 import Player from "../domain/Player";
 import './PlayerListItem.scss';
 
-const PlayerListItem = (player: Player) => {
+interface PlayerListItemProp {
+    player: Player;
+}
+
+const PlayerListItem = (prop: PlayerListItemProp) => {
+    let player: Player = prop.player;
     return (
         <div className="player-list-item">
             <span className={player.color}>{player.score}</span>
