@@ -1,10 +1,11 @@
+import './Rank.scss';
 import React, {useState} from "react";
-import Player from "../domain/Player";
-import {GAME_OVER, GameState} from "../domain/GameState";
+import Player from "../model/domain/Player";
+import {GAME_OVER, GameState} from "../model/domain/GameState";
 
 const Rank = () => {
     const [isShowEvent, setIsShowEvent] = useState<boolean>(true);
-    const [gameState, setGameState] = useState<GameState>(GAME_OVER);
+    const [gameState, setGameState] = useState<GameState>(undefined);
     const [winners, setWinners] = useState<Player[]>([
         new Player('1', 'player1', 'red', 30),
         new Player('2', 'player2', 'orange', 22),
@@ -13,10 +14,10 @@ const Rank = () => {
         new Player('5', 'player5', 'blue', 29),
         new Player('6', 'player6', 'violet', 25)
     ]);
-    let rank: number = 1;
 
-    return <>
-        <table className="dixit-score-board">
+    const ScoreBoard = () => {
+        let rank: number = 1;
+        return <table className="dixit-score-board">
             <thead>
             <tr style={{backgroundColor: "#CFC5A5"}}>
                 <th>名次</th>
@@ -35,8 +36,14 @@ const Rank = () => {
                 )
             }
             </tbody>
-        </table>
-    </>
+        </table>;
+    }
+
+    const isGameOver: boolean = GAME_OVER === gameState;
+    if (isGameOver) {
+        return <ScoreBoard/>
+    }
+    return <></>
 }
 
 export default Rank;

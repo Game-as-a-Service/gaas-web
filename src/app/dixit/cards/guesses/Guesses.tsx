@@ -1,9 +1,10 @@
-import Story from "../domain/Story";
+import './Guesses.scss';
+import Story from "../../model/domain/Story";
 import React from "react";
-import Guess from "../domain/Guess";
-import {RoundState, SCORING} from "../domain/RoundState";
-import PlayCard from "../domain/PlayCard";
-import Player from "../domain/Player";
+import Guess from "../../model/domain/Guess";
+import {RoundState, SCORING} from "../../model/domain/RoundState";
+import PlayCard from "../../model/domain/PlayCard";
+import Player from "../../model/domain/Player";
 
 interface GuessesProp {
     dixitState: RoundState;

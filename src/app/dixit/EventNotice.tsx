@@ -1,6 +1,6 @@
 import './EventNotice.scss';
 import React from "react";
-import {CARD_PLAYING, PLAYER_GUESSING, RoundState, STORY_TELLING} from "./domain/RoundState";
+import {CARD_PLAYING, PLAYER_GUESSING, RoundState, STORY_TELLING} from "./model/domain/RoundState";
 
 interface EventNoticeProp {
     isShowEvent: boolean;

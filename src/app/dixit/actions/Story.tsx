@@ -1,9 +1,9 @@
-import StoryDescription from "../carddescriptions/StoryDescription";
+import {StoryDescription} from "../cards/descriptions/CardDescription";
 import React, {useState} from "react";
-import Card from "../domain/Card";
-import {RoundState, STORY_TELLING} from "../domain/RoundState";
+import Card from "../model/domain/Card";
+import {RoundState, STORY_TELLING} from "../model/domain/RoundState";
 import EventNotice from "../EventNotice";
-import HandCards from "../cards/HandCards";
+import HandCards from "../cards/handcards/HandCards";
 
 const Story = () => {
     const [isShowEvent, setIsShowEvent] = useState<boolean>(true);

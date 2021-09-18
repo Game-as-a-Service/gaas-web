@@ -1,13 +1,13 @@
 import './Dixit.scss';
 import React, {useState} from "react";
-import Player from "./domain/Player";
+import Player from "./model/domain/Player";
 import PlayerBar from "./playerbar/PlayerBar";
 import Story from "./actions/Story";
 import PlayCard from './actions/PlayCard';
 import Guess from "./actions/Guess";
 import Score from "./actions/Score";
 import Rank from "./actions/Rank";
-import {ROUND_OVER, RoundState} from "./domain/RoundState";
+import {ROUND_OVER, RoundState} from "./model/domain/RoundState";
 
 const Dixit = () => {
     const [roundState, setRoundState] = useState<RoundState>(ROUND_OVER);

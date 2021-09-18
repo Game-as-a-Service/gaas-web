@@ -1,8 +1,8 @@
-import Guess from "../Guess";
+import Guess from "../domain/Guess";
 import Event from "./Event";
-import Story from "../Story";
-import {RoundState} from "../RoundState";
-import PlayCard from "../PlayCard";
+import Story from "../domain/Story";
+import {RoundState} from "../domain/RoundState";
+import PlayCard from "../domain/PlayCard";
 
 export default class DixitRoundScoringEvent extends Event {
     constructor(public readonly gameId: string,

@@ -1,7 +1,9 @@
+import {Color} from "./Color";
+
 export default class Player {
     constructor(public readonly id: string,
                 public name: string,
-                public readonly color: string,
+                public readonly color: Color,
                 public score: number = 0) {
     }
 

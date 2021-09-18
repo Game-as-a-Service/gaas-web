@@ -1,9 +1,9 @@
-import PlayCardDescription from "../carddescriptions/PlayCardDescription";
+import {PlayCardDescription} from "../cards/descriptions/CardDescription";
 import React, {useState} from "react";
-import Card from "../domain/Card";
-import {CARD_PLAYING, RoundState} from "../domain/RoundState";
+import Card from "../model/domain/Card";
+import {CARD_PLAYING, RoundState} from "../model/domain/RoundState";
 import EventNotice from "../EventNotice";
-import HandCards from "../cards/HandCards";
+import HandCards from "../cards/handcards/HandCards";
 
 const PlayCard = () => {
     const [isShowEvent, setIsShowEvent] = useState<boolean>(true);
@@ -43,7 +43,6 @@ const PlayCard = () => {
             {
                 selectedCard ?
                     <PlayCardDescription card={selectedCard}
-                                         description="打"
                                          onConfirmButtonClick={onPlayCardConfirm}
                                          onCancelButtonClick={onPlayCardCancel}/>
                     : <EventNotice isShowEvent={isShowEvent} dixitState={roundState}/>

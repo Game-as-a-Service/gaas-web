@@ -1,11 +1,11 @@
 import React, {useState} from "react";
-import Card from "../domain/Card";
-import PlayCard from "../domain/PlayCard";
-import Story from "../domain/Story";
-import Guess from "../domain/Guess";
-import Player from "../domain/Player";
-import {RoundState, SCORING} from "../domain/RoundState";
-import Guesses from "../cards/Guesses";
+import Card from "../model/domain/Card";
+import PlayCard from "../model/domain/PlayCard";
+import Story from "../model/domain/Story";
+import Guess from "../model/domain/Guess";
+import Player from "../model/domain/Player";
+import {RoundState, SCORING} from "../model/domain/RoundState";
+import Guesses from "../cards/guesses/Guesses";
 
 const Score = () => {
     const [roundState, setRoundState] = useState<RoundState>(undefined);
