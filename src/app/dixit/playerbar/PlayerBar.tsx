@@ -1,33 +1,34 @@
 import './PlayerBar.scss';
 import Logo from "../logo/Logo";
-import {useState} from "react";
-import Player from "../domain/Player";
-import PlayerListItem from "./PlayerListItem";
+import Player from "../model/domain/Player";
 
-const PlayerBar = () => {
-    const [players, setPlayers] = useState<Player[]>([
-        new Player(1, 'player1', 'red', 30),
-        new Player(2, 'player2', 'orange', 22),
-        new Player(3, 'player3', 'yellow', 24),
-        new Player(4, 'player4', 'green', 27),
-        new Player(5, 'player5', 'blue', 29),
-        new Player(6, 'player6', 'violet', 25)
-    ]);
-    return (
-        <div className="player-bar">
-            <div className="logo-bar">
-                <Logo/>
-            </div>
-            <div className="player-list">
-                {
-                    players.map(player => {
-                        return <PlayerListItem id={player.id} name={player.name}
-                                               color={player.color} score={player.score}/>
-                    })
-                }
-            </div>
+interface PlayerBarProp {
+    players: Player[];
+}
+
+interface PlayerItemProp {
+    player: Player;
+}
+
+const PlayerBar = (prop: PlayerBarProp) => {
+    const players = prop.players;
+
+    const PlayerItem = (prop: PlayerItemProp) => {
+        let player: Player = prop.player;
+        return <div className="player-item">
+            <span className={player.color}>{player.score}</span>
+            <span className="player-name">{player.name}</span>
+        </div>;
+    }
+
+    return <div className="player-bar">
+        <div className="logo-bar">
+            <Logo/>
         </div>
-    );
+        {
+            players.map(player => <PlayerItem player={player}/>)
+        }
+    </div>;
 }
 
 export default PlayerBar;
