@@ -8,31 +8,27 @@ import Player from "../../model/domain/Player";
 
 interface GuessesProp {
     dixitState: RoundState;
-    story: Story;
+    story?: Story;
     playCards: Array<PlayCard>;
     guesses: Array<Guess>;
 }
 
-interface GuessProp {
-    playCard: PlayCard;
-}
-
 const Guesses = (prop: GuessesProp) => {
     const dixitState: RoundState = prop.dixitState;
-    const story: Story = prop.story;
+    const story: Story | undefined = prop.story;
     const playCards: Array<PlayCard> = prop.playCards;
     const guesses: Array<Guess> = prop.guesses;
 
-    const Guess = (prop: GuessProp) => {
-        const playCard: PlayCard = prop.playCard;
+    const Guess = (prop: { playCard?: PlayCard }) => {
+        const playCard: PlayCard | undefined = prop.playCard;
         const guessers: Array<Player> = guesses.filter(guess => guess.playCard.equals(playCard))
             .map(guess => guess.guesser);
 
         const isGuessersEmpty = guessers.length === 0;
 
         return <div className="dixit-guess-zone">
-            <img className={playCard.player.color} alt="card"
-                 src={`data:image/png;base64, ${playCard.card.image}`}/>
+            <img className={playCard?.player.color} alt="card"
+                 src={`data:image/png;base64, ${playCard?.card.image}`}/>
             {
                 isGuessersEmpty ? <></> : guessers.map(guesser =>
                     <p
@@ -53,7 +49,7 @@ const Guesses = (prop: GuessesProp) => {
             {
                 playCards.map(playCard => <Guess playCard={playCard}/>)
             }
-            <Guess playCard={story.playCard}/>
+            <Guess playCard={story?.playCard}/>
         </div>
     }
     return <></>

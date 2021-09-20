@@ -2,15 +2,9 @@ import './EventNotice.scss';
 import React from "react";
 import {CARD_PLAYING, PLAYER_GUESSING, RoundState, STORY_TELLING} from "./model/domain/RoundState";
 
-interface EventNoticeProp {
-    isShowEvent: boolean;
-    dixitState: RoundState;
-}
-
-const EventNotice = (prop: EventNoticeProp) => {
-    const isShowEvent: boolean = prop.isShowEvent;
+const EventNotice = (prop: { dixitState: RoundState }) => {
     const dixitState: RoundState = prop.dixitState;
-    if (isShowEvent && dixitState) {
+    if (dixitState) {
         const isStoryTelling: boolean = STORY_TELLING === dixitState;
         const isCardPlaying: boolean = CARD_PLAYING === dixitState;
         const isPlayerGuessing: boolean = PLAYER_GUESSING === dixitState;

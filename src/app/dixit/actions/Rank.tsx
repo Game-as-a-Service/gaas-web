@@ -1,19 +1,44 @@
 import './Rank.scss';
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Player from "../model/domain/Player";
 import {GAME_OVER, GameState} from "../model/domain/GameState";
+import {Subscription} from "rxjs";
+import {dixitService} from "../services/services";
+import DixitGameOverEvent from "../model/events/DixitGameOverEvent";
 
 const Rank = () => {
-    const [isShowEvent, setIsShowEvent] = useState<boolean>(true);
     const [gameState, setGameState] = useState<GameState>(undefined);
     const [winners, setWinners] = useState<Player[]>([
-        new Player('1', 'player1', 'red', 30),
-        new Player('2', 'player2', 'orange', 22),
-        new Player('3', 'player3', 'yellow', 24),
-        new Player('4', 'player4', 'green', 27),
-        new Player('5', 'player5', 'blue', 29),
-        new Player('6', 'player6', 'violet', 25)
+        // new Player('1', 'player1', 'RED', 30),
+        // new Player('2', 'player2', 'ORANGE', 22),
+        // new Player('3', 'player3', 'YELLOW', 24),
+        // new Player('4', 'player4', 'GREEN', 27),
+        // new Player('5', 'player5', 'BLUE', 29),
+        // new Player('6', 'player6', 'VIOLET', 25)
     ]);
+    const subscriptions: Array<Subscription> = [];
+    let dixitId: string = 'dixitId';
+    let playerId: string = '1';
+
+    useEffect(() => {
+        subscribeEvents();
+        return () => {
+            unsubscribeEvents();
+        };
+    }, []);
+
+    const subscribeEvents = () => {
+        subscriptions.push(dixitService.subscribeToDixitGameOverEvent(dixitId, playerId, onDixitGameOver));
+    }
+
+    const onDixitGameOver = (dixitGameOverEvent: DixitGameOverEvent) => {
+        setGameState(dixitGameOverEvent.gameState);
+        setWinners(dixitGameOverEvent.winners);
+    }
+
+    const unsubscribeEvents = () => {
+        subscriptions.forEach(subscription => subscription.unsubscribe());
+    }
 
     const ScoreBoard = () => {
         let rank: number = 1;

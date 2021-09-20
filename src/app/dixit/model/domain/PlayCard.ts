@@ -6,7 +6,10 @@ export default class PlayCard {
                 public readonly card: Card) {
     }
 
-    public equals(playCard: PlayCard): boolean {
-        return this.player.equals(playCard.player) && this.card.equals(playCard.card);
+    public equals(playCard?: PlayCard): boolean {
+        if (playCard) {
+            return this.player.equals(playCard.player) && this.card.equals(playCard.card);
+        }
+        return false;
     }
 }

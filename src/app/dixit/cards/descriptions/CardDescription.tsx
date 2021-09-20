@@ -6,7 +6,7 @@ import CardDecision from "../decisons/CardDecision";
 
 interface CardDescriptionProp {
     card: Card;
-    onConfirmButtonClick: () => void;
+    onConfirmButtonClick: (cardId: number, storyPhrase?: string) => void;
     onCancelButtonClick: () => void;
 }
 
@@ -18,8 +18,8 @@ const StoryDescription = (prop: CardDescriptionProp) => {
         setStoryPhrase(e.target.value);
     }
 
-    const onConfirmButtonClick = () => {
-        prop.onConfirmButtonClick();
+    const onConfirmButtonClick = (storyPhrase: string, cardId: number) => {
+        prop.onConfirmButtonClick(cardId, storyPhrase);
     }
 
     const onCancelButtonClick = () => {
@@ -31,15 +31,15 @@ const StoryDescription = (prop: CardDescriptionProp) => {
         <textarea className="dixit-card-description" placeholder="請說出你的故事"
                   maxLength={40} onChange={onStoryPhraseChange}>{storyPhrase}</textarea>
         <CardDecision className="dixit-card-decision"
-                      onConfirm={onConfirmButtonClick} onCancel={onCancelButtonClick}/>
+                      onConfirm={() => onConfirmButtonClick(storyPhrase, card.id)} onCancel={onCancelButtonClick}/>
     </>;
 }
 
 const PlayCardDescription = (prop: CardDescriptionProp) => {
     const card: Card = prop.card;
 
-    const onConfirmButtonClick = () => {
-        prop.onConfirmButtonClick();
+    const onConfirmButtonClick = (cardId: number) => {
+        prop.onConfirmButtonClick(cardId);
     }
 
     const onCancelButtonClick = () => {
@@ -50,15 +50,15 @@ const PlayCardDescription = (prop: CardDescriptionProp) => {
         <DisplayCard card={card}/>
         <span className="dixit-card-description">打它？</span>
         <CardDecision className="dixit-card-decision"
-                      onConfirm={onConfirmButtonClick} onCancel={onCancelButtonClick}/>
+                      onConfirm={() => onConfirmButtonClick(card.id)} onCancel={onCancelButtonClick}/>
     </>;
 }
 
 const GuessDescription = (prop: CardDescriptionProp) => {
     const card: Card = prop.card;
 
-    const onConfirmButtonClick = () => {
-        prop.onConfirmButtonClick();
+    const onConfirmButtonClick = (cardId: number) => {
+        prop.onConfirmButtonClick(cardId);
     }
 
     const onCancelButtonClick = () => {
@@ -69,7 +69,7 @@ const GuessDescription = (prop: CardDescriptionProp) => {
         <DisplayCard card={card}/>
         <span className="dixit-card-description">猜它？</span>
         <CardDecision className="dixit-card-decision"
-                      onConfirm={onConfirmButtonClick} onCancel={onCancelButtonClick}/>
+                      onConfirm={() => onConfirmButtonClick(card.id)} onCancel={onCancelButtonClick}/>
     </>;
 }
 

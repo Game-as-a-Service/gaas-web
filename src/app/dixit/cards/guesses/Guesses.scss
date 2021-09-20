@@ -19,32 +19,32 @@
     float: left;
   }
 
-  .red {
+  .RED {
     @extend .dixit-guess;
     border-color: #F6A9A9;
   }
 
-  .orange {
+  .ORANGE {
     @extend .dixit-guess;
     border-color: #FFBF86;
   }
 
-  .yellow {
+  .YELLOW {
     @extend .dixit-guess;
     border-color: #FFF47D;
   }
 
-  .green {
+  .GREEN {
     @extend .dixit-guess;
     border-color: #C2F784;
   }
 
-  .blue {
+  .BLUE {
     @extend .dixit-guess;
     border-color: #E4FBFF;
   }
 
-  .violet {
+  .VIOLET {
     @extend .dixit-guess;
     border-color: #B8B5FF;
   }
