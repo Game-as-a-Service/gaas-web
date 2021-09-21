@@ -13,9 +13,9 @@ import {useDixitContext} from "../Dixit";
 const PlayerBar = () => {
     const {dixitId, playerId} = useDixitContext();
     // When GameState === STARTED，Then set players
-    const [gameState, setGameState] = useState<GameState>();
+    const [gameState, setGameState] = useState<GameState>(undefined);
     // When RoundState === ROUND_OVER，Then reset players
-    const [roundState, setRoundState] = useState<RoundState>();
+    const [roundState, setRoundState] = useState<RoundState>(undefined);
     const [players, setPlayers] = useState<Player[]>([]);
     const subscriptions: Array<Subscription> = [];
 

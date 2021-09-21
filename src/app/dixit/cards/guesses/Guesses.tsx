@@ -19,25 +19,25 @@ const Guesses = (prop: GuessesProp) => {
     const playCards: Array<PlayCard> = prop.playCards;
     const guesses: Array<Guess> = prop.guesses;
 
-    const Guess = (prop: { playCard?: PlayCard }) => {
-        const playCard: PlayCard | undefined = prop.playCard;
+    const Guess = (prop: { playCard: PlayCard }) => {
+        const playCard: PlayCard = prop.playCard;
         const guessers: Array<Player> = guesses.filter(guess => guess.playCard.equals(playCard))
             .map(guess => guess.guesser);
 
         const isGuessersEmpty = guessers.length === 0;
 
         return <div className="dixit-guess-zone">
-            <img className={playCard?.player.color} alt="card"
-                 src={`data:image/png;base64, ${playCard?.card.image}`}/>
+            <img className={playCard.player.color} alt="card"
+                 src={`data:image/png;base64, ${playCard.card.image}`}/>
             {
                 isGuessersEmpty ? <></> : guessers.map(guesser =>
-                    <p
-                        className={guesser.color}
-                        style={{
-                            width: "140px", height: "30px",
-                            textAlign: "center", fontSize: "20px", fontWeight: "bold",
-                            background: "#403F48", color: "#95A792", marginTop: "10px"
-                        }}>{guesser.name}</p>)
+                    <p className={guesser.color}
+                       style={{
+                           width: "140px", height: "30px",
+                           textAlign: "center", fontSize: "20px", fontWeight: "bold",
+                           background: "#403F48", color: "#95A792", marginTop: "10px"
+                       }}>{guesser.name}
+                    </p>)
             }
         </div>
     }
@@ -49,7 +49,7 @@ const Guesses = (prop: GuessesProp) => {
             {
                 playCards.map(playCard => <Guess playCard={playCard}/>)
             }
-            <Guess playCard={story?.playCard}/>
+            {story ? <Guess playCard={story.playCard}/> : <></>}
         </div>
     }
     return <></>
