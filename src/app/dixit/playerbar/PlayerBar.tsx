@@ -8,16 +8,16 @@ import {Subscription} from "rxjs";
 import {dixitService} from "../services/services";
 import DixitGameStartedEvent from "../model/events/DixitGameStartedEvent";
 import DixitRoundOverEvent from "../model/events/DixitRoundOverEvent";
+import {useDixitContext} from "../Dixit";
 
 const PlayerBar = () => {
+    const {dixitId, playerId} = useDixitContext();
     // When GameState === STARTED，Then set players
     const [gameState, setGameState] = useState<GameState>();
     // When RoundState === ROUND_OVER，Then reset players
     const [roundState, setRoundState] = useState<RoundState>();
     const [players, setPlayers] = useState<Player[]>([]);
     const subscriptions: Array<Subscription> = [];
-    let dixitId: string = 'dixitId';
-    let playerId: string = '0';
 
     useEffect(() => {
         subscribeEvents();

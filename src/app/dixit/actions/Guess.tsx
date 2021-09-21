@@ -9,16 +9,16 @@ import {dixitService} from "../services/services";
 import {Subscription} from "rxjs";
 import DixitRoundPlayerGuessingEvent from "../model/events/DixitRoundPlayerGuessingEvent";
 import {DixitRequest} from "../services/DixitService";
+import {useDixitContext} from "../Dixit";
 
 let rounds: number = 0;
 let roundStateBackup: RoundState = undefined;
 const Guess = () => {
+    const {dixitId, playerId} = useDixitContext();
     const [roundState, setRoundState] = useState<RoundState>(roundStateBackup);
     const [playCards, setPlayCards] = useState<PlayCard[]>([]);
     const [selectedCard, setSelectedCard] = useState<Card | undefined>(undefined);
     const subscriptions: Array<Subscription> = [];
-    let dixitId: string = 'dixitId';
-    let playerId: string = '1';
 
     useEffect(() => {
         subscribeEvents();

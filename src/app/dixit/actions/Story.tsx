@@ -8,16 +8,16 @@ import {TellStoryRequest} from "../services/DixitService";
 import {dixitService} from "../services/services";
 import DixitRoundStoryTellingEvent from "../model/events/DixitRoundStoryTellingEvent";
 import {Subscription} from "rxjs";
+import {useDixitContext} from "../Dixit";
 
 let rounds: number = 0;
 let roundStateBackup: RoundState = undefined;
 const Story = () => {
+    const {dixitId, playerId} = useDixitContext();
     const [roundState, setRoundState] = useState<RoundState>(roundStateBackup);
     const [handCards, setHandCards] = useState<Card[]>([]);
     const [selectedCard, setSelectedCard] = useState<Card | undefined>(undefined);
     const subscriptions: Array<Subscription> = [];
-    let dixitId: string = 'dixitId';
-    let playerId: string = '0';
 
     useEffect(() => {
         subscribeEvents();

@@ -5,20 +5,13 @@ import {GAME_OVER, GameState} from "../model/domain/GameState";
 import {Subscription} from "rxjs";
 import {dixitService} from "../services/services";
 import DixitGameOverEvent from "../model/events/DixitGameOverEvent";
+import {useDixitContext} from "../Dixit";
 
 const Rank = () => {
+    const {dixitId, playerId} = useDixitContext();
     const [gameState, setGameState] = useState<GameState>(undefined);
-    const [winners, setWinners] = useState<Player[]>([
-        // new Player('1', 'player1', 'RED', 30),
-        // new Player('2', 'player2', 'ORANGE', 22),
-        // new Player('3', 'player3', 'YELLOW', 24),
-        // new Player('4', 'player4', 'GREEN', 27),
-        // new Player('5', 'player5', 'BLUE', 29),
-        // new Player('6', 'player6', 'VIOLET', 25)
-    ]);
+    const [winners, setWinners] = useState<Player[]>([]);
     const subscriptions: Array<Subscription> = [];
-    let dixitId: string = 'dixitId';
-    let playerId: string = '1';
 
     useEffect(() => {
         subscribeEvents();
