@@ -28,7 +28,8 @@ class DixitService {
         config.brokerURL = this.baseBrokerURL;
         config.reconnectDelay = 200;
         if (this.rxStomp.active) {
-            this.rxStomp.deactivate();
+            this.rxStomp.deactivate()
+                .then(r => r);
         }
         this.rxStomp.configure(config);
         this.rxStomp.activate();

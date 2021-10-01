@@ -1,23 +1,23 @@
 import './PlayerBar.scss';
 import Logo from "../logo/Logo";
 import Player from "../model/Player";
-import {useEffect, useState} from "react";
-import {RoundState} from "../model/RoundState";
-import {GameState} from "../model/GameState";
+import React, {useEffect} from "react";
 import {Subscription} from "rxjs";
 import {dixitService} from "../services/services";
 import DixitGameStartedEvent from "../events/gamestate/DixitGameStartedEvent";
 import DixitRoundOverEvent from "../events/roundstate/DixitRoundOverEvent";
 import {useDixitContext} from "../Dixit";
-import {DixitContextProp} from "../DixitContext";
+import DixitContextProp from "../DixitContext";
 
 const PlayerBar = () => {
-    const {dixitId, playerId}: DixitContextProp  = useDixitContext();
-    // When GameState === STARTED，Then set players
-    const [gameState, setGameState] = useState<GameState>(undefined);
-    // When RoundState === ROUND_OVER，Then reset players
-    const [roundState, setRoundState] = useState<RoundState>(undefined);
-    const [players, setPlayers] = useState<Player[]>([]);
+    const {
+        dixitId, playerId,
+        // When GameState === STARTED，Then set players
+        gameState, setGameState,
+        // When RoundState === ROUND_OVER，Then reset players
+        roundState, setRoundState
+    }: DixitContextProp = useDixitContext() as DixitContextProp;
+    const [players, setPlayers] = React.useState<Player[]>([]);
     const subscriptions: Array<Subscription> = [];
 
     useEffect(() => {
@@ -59,8 +59,7 @@ const PlayerBar = () => {
 
     }, [roundState, setRoundState]);
 
-    const PlayerItem = (prop: { player: Player }) => {
-        let player: Player = prop.player;
+    const PlayerItem = ({player}: { player: Player }) => {
         return <div className="player-item">
             <span className={player.color}>{player.score}</span>
             <span className="player-name">{player.name.substr(0, 7)}</span>

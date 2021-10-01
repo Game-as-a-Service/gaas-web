@@ -1,20 +1,18 @@
 import './Rank.scss';
 import React, {useEffect, useState} from "react";
 import Player from "../model/Player";
-import {GAME_OVER, GameState} from "../model/GameState";
+import {GAME_OVER} from "../model/GameState";
 import {Subscription} from "rxjs";
 import {dixitService} from "../services/services";
 import DixitGameOverEvent from "../events/gamestate/DixitGameOverEvent";
 import {useDixitContext} from "../Dixit";
-
-interface ScoreBoardItemProp {
-    winner: Player;
-    rank: number;
-}
+import DixitContextProp from "../DixitContext";
 
 const DixitGameRank = () => {
-    const {dixitId, playerId} = useDixitContext();
-    const [gameState, setGameState] = useState<GameState>(undefined);
+    const {
+        dixitId, playerId,
+        gameState, setGameState
+    }: DixitContextProp = useDixitContext() as DixitContextProp;
     const [winners, setWinners] = useState<Player[]>([]);
     const subscriptions: Array<Subscription> = [];
 
@@ -55,9 +53,7 @@ const DixitGameRank = () => {
         </table>;
     }
 
-    const ScoreBoardItem = (prop: ScoreBoardItemProp) => {
-        const winner: Player = prop.winner;
-        const rank: number = prop.rank;
+    const ScoreBoardItem = ({winner, rank}: { winner: Player, rank: number }) => {
         return (
             <tr className={winner.color}>
                 <td>{(rank + 1)}</td>

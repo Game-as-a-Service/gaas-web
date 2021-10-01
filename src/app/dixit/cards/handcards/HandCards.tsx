@@ -9,24 +9,24 @@ interface HandCardsProp {
     onHandCardClick: (e: React.MouseEvent<HTMLElement>, handCardId: number) => void;
 }
 
-const HandCards = (prop: HandCardsProp) => {
-    const dixitState: RoundState = prop.dixitState;
-    const handCards: Array<Card> = prop.handCards;
+const HandCards = ({dixitState, handCards, onHandCardClick}: HandCardsProp) => {
     const isStoryTelling: boolean = STORY_TELLING === dixitState;
     const isCardPlaying: boolean = CARD_PLAYING === dixitState;
 
     if (isStoryTelling || isCardPlaying) {
         const isHandCardsEmpty = handCards.length === 0;
         if (!isHandCardsEmpty) {
-            return <div className="dixit-cards">
-                {
-                    handCards.map(handCard => {
-                        return <img className="dixit-card" alt="card"
-                                    src={`data:image/png;base64, ${handCard.image}`}
-                                    onClick={e => prop.onHandCardClick(e, handCard.id)}/>
-                    })
-                }
-            </div>
+            return (
+                <div className="dixit-cards">
+                    {
+                        handCards.map(handCard => {
+                            return <img className="dixit-card" alt="card"
+                                        src={`data:image/png;base64, ${handCard.image}`}
+                                        onClick={e => onHandCardClick(e, handCard.id)}/>
+                        })
+                    }
+                </div>
+            );
         }
     }
     return <></>

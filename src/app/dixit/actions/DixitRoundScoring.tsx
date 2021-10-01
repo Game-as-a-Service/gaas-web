@@ -1,19 +1,19 @@
-import React, {useEffect, useState} from "react";
-import PlayCard from "../model/PlayCard";
-import Guess from "../model/Guess";
-import {RoundState, SCORING} from "../model/RoundState";
+import React, {useEffect} from "react";
+import {SCORING} from "../model/RoundState";
 import Guesses from "../cards/guesses/Guesses";
 import {dixitService} from "../services/services";
 import {Subscription} from "rxjs";
 import DixitRoundScoringEvent from "../events/roundstate/DixitRoundScoringEvent";
 import {useDixitContext} from "../Dixit";
-import {DixitContextProp} from "../DixitContext";
+import DixitContextProp from "../DixitContext";
 
 const DixitRoundScoring = () => {
-    const {dixitId, playerId}: DixitContextProp = useDixitContext();
-    const [roundState, setRoundState] = useState<RoundState>(undefined);
-    const [playCards, setPlayCards] = useState<PlayCard[]>([]);
-    const [guesses, setGuesses] = useState<Guess[]>([]);
+    const {
+        dixitId, playerId,
+        roundState, setRoundState,
+        playCards, setPlayCards,
+        guesses, setGuesses
+    }: DixitContextProp = useDixitContext() as DixitContextProp;
     const subscriptions: Array<Subscription> = [];
 
     useEffect(() => {
