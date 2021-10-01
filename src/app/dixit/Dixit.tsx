@@ -1,5 +1,5 @@
 import './Dixit.scss';
-import React, {useContext, useState} from "react";
+import React, {createContext, useContext, useState} from "react";
 import PlayerBar from "./playerbar/PlayerBar";
 import StoryTelling from "./actions/StoryTelling";
 import CardPlaying from './actions/CardPlaying';
@@ -14,22 +14,22 @@ import Story from "./model/Story";
 import PlayCard from "./model/PlayCard";
 import Guess from "./model/Guess";
 
-export const DixitContext = React.createContext<DixitContextValue | undefined>(undefined);
+export const DixitContext = createContext<DixitContextValue | undefined>(undefined);
 
 export const useDixitContext = () => {
     return useContext(DixitContext);
 };
 
 const Dixit = () => {
-    const [dixitId, setDixitId] = React.useState<string>('dixitId');
-    const [playerId, setPlayerId] = React.useState<string>('0');
+    const [dixitId, setDixitId] = useState<string>('dixitId');
+    const [playerId, setPlayerId] = useState<string>('0');
     const [rounds, setRounds] = useState<number>(0);
-    const [gameState, setGameState] = React.useState<GameState>(PREPARING);
-    const [roundState, setRoundState] = React.useState<RoundState>(undefined);
-    const [handCards, setHandCards] = React.useState<Card[]>([]);
-    const [story, setStory] = React.useState<Story | undefined>(undefined);
-    const [playCards, setPlayCards] = React.useState<PlayCard[]>([]);
-    const [guesses, setGuesses] = React.useState<Guess[]>([]);
+    const [gameState, setGameState] = useState<GameState>(PREPARING);
+    const [roundState, setRoundState] = useState<RoundState>(undefined);
+    const [handCards, setHandCards] = useState<Card[]>([]);
+    const [story, setStory] = useState<Story | undefined>(undefined);
+    const [playCards, setPlayCards] = useState<PlayCard[]>([]);
+    const [guesses, setGuesses] = useState<Guess[]>([]);
     const dixitContextValue: DixitContextValue = {
         dixitId, setDixitId,
         playerId, setPlayerId,
@@ -53,8 +53,7 @@ const Dixit = () => {
                 <DixitGameRank/>
             </div>
         </DixitContext.Provider>
-    )
-        ;
+    );
 }
 
 export default Dixit;

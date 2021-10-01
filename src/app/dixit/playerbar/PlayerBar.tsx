@@ -1,7 +1,7 @@
 import './PlayerBar.scss';
 import Logo from "../logo/Logo";
 import Player from "../model/Player";
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {Subscription} from "rxjs";
 import {dixitService} from "../services/services";
 import DixitGameStartedEvent from "../events/gamestate/DixitGameStartedEvent";
@@ -17,7 +17,7 @@ const PlayerBar = () => {
         // When RoundState === ROUND_OVER，Then reset players
         roundState, setRoundState
     }: DixitContextProp = useDixitContext() as DixitContextProp;
-    const [players, setPlayers] = React.useState<Player[]>([]);
+    const [players, setPlayers] = useState<Player[]>([]);
     const subscriptions: Array<Subscription> = [];
 
     useEffect(() => {
@@ -60,10 +60,12 @@ const PlayerBar = () => {
     }, [roundState, setRoundState]);
 
     const PlayerItem = ({player}: { player: Player }) => {
-        return <div className="player-item">
-            <span className={player.color}>{player.score}</span>
-            <span className="player-name">{player.name.substr(0, 7)}</span>
-        </div>;
+        return (
+            <div className="player-item">
+                <span className={player.color}>{player.score}</span>
+                <span className="player-name">{player.name.substr(0, 7)}</span>
+            </div>
+        );
     }
 
     return <div className="player-bar">

@@ -17,7 +17,6 @@ const PlayerGuessing = () => {
         dixitId, playerId,
         rounds, setRounds,
         roundState, setRoundState,
-        handCards, setHandCards,
         playCards, setPlayCards,
         guesses, setGuesses
     }: DixitContextProp = useDixitContext() as DixitContextProp;
@@ -43,7 +42,7 @@ const PlayerGuessing = () => {
     }
 
     const onDixitDuringPlayerGuessing = (dixitDuringRoundPlayerGuessingEvent: DixitDuringRoundPlayerGuessingEvent) => {
-        setGuesses(dixitDuringRoundPlayerGuessingEvent.guesses);
+        // setGuesses(dixitDuringRoundPlayerGuessingEvent.guesses);
     }
 
     const unsubscribeEvents = () => {

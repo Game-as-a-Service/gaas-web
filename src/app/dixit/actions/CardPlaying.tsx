@@ -43,7 +43,7 @@ const CardPlaying = () => {
     }
 
     const onDixitDuringCardPlaying = (dixitDuringRoundCardPlayingEvent: DixitDuringRoundCardPlayingEvent) => {
-        setPlayCards(dixitDuringRoundCardPlayingEvent.playCards);
+        // setPlayCards(dixitDuringRoundCardPlayingEvent.playCards);
     }
 
     const unsubscribeEvents = () => {
