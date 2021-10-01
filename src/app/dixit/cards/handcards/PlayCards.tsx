@@ -1,8 +1,8 @@
 import './HandCards.scss';
-import PlayCard from "../../model/domain/PlayCard";
+import PlayCard from "../../model/PlayCard";
 import React from "react";
-import Card from "../../model/domain/Card";
-import {PLAYER_GUESSING, RoundState} from "../../model/domain/RoundState";
+import Card from "../../model/Card";
+import {PLAYER_GUESSING, RoundState} from "../../model/RoundState";
 
 interface PlayCardsProp {
     dixitState: RoundState;

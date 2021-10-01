@@ -1,21 +1,18 @@
 import './Guesses.scss';
-import Story from "../../model/domain/Story";
 import React from "react";
-import Guess from "../../model/domain/Guess";
-import {RoundState, SCORING} from "../../model/domain/RoundState";
-import PlayCard from "../../model/domain/PlayCard";
-import Player from "../../model/domain/Player";
+import Guess from "../../model/Guess";
+import {RoundState, SCORING} from "../../model/RoundState";
+import PlayCard from "../../model/PlayCard";
+import Player from "../../model/Player";
 
 interface GuessesProp {
     dixitState: RoundState;
-    story?: Story;
     playCards: Array<PlayCard>;
     guesses: Array<Guess>;
 }
 
 const Guesses = (prop: GuessesProp) => {
     const dixitState: RoundState = prop.dixitState;
-    const story: Story | undefined = prop.story;
     const playCards: Array<PlayCard> = prop.playCards;
     const guesses: Array<Guess> = prop.guesses;
 
@@ -23,7 +20,6 @@ const Guesses = (prop: GuessesProp) => {
         const playCard: PlayCard = prop.playCard;
         const guessers: Array<Player> = guesses.filter(guess => guess.playCard.equals(playCard))
             .map(guess => guess.guesser);
-
         const isGuessersEmpty = guessers.length === 0;
 
         return <div className="dixit-guess-zone">
@@ -49,7 +45,6 @@ const Guesses = (prop: GuessesProp) => {
             {
                 playCards.map(playCard => <Guess playCard={playCard}/>)
             }
-            {story ? <Guess playCard={story.playCard}/> : <></>}
         </div>
     }
     return <></>

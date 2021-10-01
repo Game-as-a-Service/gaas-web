@@ -1,13 +1,15 @@
 import axios, {AxiosPromise} from "axios";
 import {RxStomp, RxStompConfig} from "@stomp/rx-stomp";
-import DixitRoundStoryTellingEvent from "../model/events/DixitRoundStoryTellingEvent";
+import DixitRoundStoryTellingEvent from "../events/roundstate/DixitRoundStoryTellingEvent";
 import {Subscription} from "rxjs";
-import DixitGameStartedEvent from "../model/events/DixitGameStartedEvent";
-import DixitRoundCardPlayingEvent from "../model/events/DixitRoundCardPlayingEvent";
-import DixitRoundPlayerGuessingEvent from "../model/events/DixitRoundPlayerGuessingEvent";
-import DixitRoundScoringEvent from "../model/events/DixitRoundScoringEvent";
-import DixitGameOverEvent from "../model/events/DixitGameOverEvent";
-import DixitRoundOverEvent from "../model/events/DixitRoundOverEvent";
+import DixitGameStartedEvent from "../events/gamestate/DixitGameStartedEvent";
+import DixitRoundCardPlayingEvent from "../events/roundstate/DixitRoundCardPlayingEvent";
+import DixitRoundPlayerGuessingEvent from "../events/roundstate/DixitRoundPlayerGuessingEvent";
+import DixitRoundScoringEvent from "../events/roundstate/DixitRoundScoringEvent";
+import DixitGameOverEvent from "../events/gamestate/DixitGameOverEvent";
+import DixitRoundOverEvent from "../events/roundstate/DixitRoundOverEvent";
+import DixitDuringRoundCardPlayingEvent from "../events/during/DixitDuringRoundCardPlayingEvent";
+import DixitDuringRoundPlayerGuessingEvent from "../events/during/DixitDuringRoundPlayerGuessingEvent";
 
 class DixitService {
     private readonly baseURL: string | undefined;
@@ -65,10 +67,22 @@ class DixitService {
             .subscribe(res => subscriber(JSON.parse(res.body) as DixitRoundCardPlayingEvent));
     }
 
+    public subscribeToDixitDuringRoundCardPlayingEvent(dixitId: string, playerId: string, subscriber: (event: DixitDuringRoundCardPlayingEvent) => void): Subscription {
+        const topic: string = `/topic/dixit/${dixitId}/during/card-playing/players/${playerId}`;
+        return this.rxStomp.watch(topic)
+            .subscribe(res => subscriber(JSON.parse(res.body) as DixitDuringRoundCardPlayingEvent));
+    }
+
     public subscribeToDixitPlayerGuessingEvent(dixitId: string, playerId: string, subscriber: (event: DixitRoundPlayerGuessingEvent) => void): Subscription {
         const topic: string = `/topic/dixit/${dixitId}/roundStates/player-guessing/players/${playerId}`;
         return this.rxStomp.watch(topic)
             .subscribe(res => subscriber(JSON.parse(res.body) as DixitRoundPlayerGuessingEvent));
+    }
+
+    public subscribeToDixitDuringRoundPlayerGuessingEvent(dixitId: string, playerId: string, subscriber: (event: DixitDuringRoundPlayerGuessingEvent) => void): Subscription {
+        const topic: string = `/topic/dixit/${dixitId}/during/player-guessing/players/${playerId}`;
+        return this.rxStomp.watch(topic)
+            .subscribe(res => subscriber(JSON.parse(res.body) as DixitDuringRoundPlayerGuessingEvent));
     }
 
     public subscribeToDixitScoringEvent(dixitId: string, playerId: string, subscriber: (event: DixitRoundScoringEvent) => void): Subscription {

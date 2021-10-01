@@ -1,32 +1,33 @@
 import './Dixit.scss';
 import React, {useContext} from "react";
+import {DixitContextProp} from "./DixitContext";
 import PlayerBar from "./playerbar/PlayerBar";
-import Story from "./actions/Story";
-import PlayCard from './actions/PlayCard';
-import Guess from "./actions/Guess";
-import Score from "./actions/Score";
-import Rank from "./actions/Rank";
+import StoryTelling from "./actions/StoryTelling";
+import CardPlaying from './actions/CardPlaying';
+import PlayerGuessing from "./actions/PlayerGuessing";
+import DixitRoundScoring from "./actions/DixitRoundScoring";
+import DixitGameRank from "./actions/DixitGameRank";
 
-let dixitId: string = 'dixitId';
-let playerId: string = '0';
-const dixitContextValue: { dixitId: string, playerId: string } = {dixitId, playerId};
-
-export const DixitContext = React.createContext<{ dixitId: string, playerId: string }>(dixitContextValue);
+export const DixitContext = React.createContext<DixitContextProp>(new DixitContextProp('dixitId', '0'));
 
 export const useDixitContext = () => {
     return useContext(DixitContext);
 };
 
 const Dixit = () => {
+    const dixitId: string = 'dixitId';
+    const playerId: string = '0';
+    const [dixitContextValue] = React.useState<DixitContextProp>(new DixitContextProp(dixitId, playerId));
+
     return (
         <DixitContext.Provider value={dixitContextValue}>
             <div className="dixit">
                 <PlayerBar/>
-                <Story/>
-                <PlayCard/>
-                <Guess/>
-                <Score/>
-                <Rank/>
+                <StoryTelling/>
+                <CardPlaying/>
+                <PlayerGuessing/>
+                <DixitRoundScoring/>
+                <DixitGameRank/>
             </div>
         </DixitContext.Provider>
     );

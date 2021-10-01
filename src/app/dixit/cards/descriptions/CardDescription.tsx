@@ -1,6 +1,6 @@
 import './CardDescription.scss';
 import React, {useState} from "react";
-import Card from "../../model/domain/Card";
+import Card from "../../model/Card";
 import DisplayCard from "../../displaycard/DisplayCard";
 import CardDecision from "../decisons/CardDecision";
 

@@ -1,13 +1,18 @@
 import './Rank.scss';
 import React, {useEffect, useState} from "react";
-import Player from "../model/domain/Player";
-import {GAME_OVER, GameState} from "../model/domain/GameState";
+import Player from "../model/Player";
+import {GAME_OVER, GameState} from "../model/GameState";
 import {Subscription} from "rxjs";
 import {dixitService} from "../services/services";
-import DixitGameOverEvent from "../model/events/DixitGameOverEvent";
+import DixitGameOverEvent from "../events/gamestate/DixitGameOverEvent";
 import {useDixitContext} from "../Dixit";
 
-const Rank = () => {
+interface ScoreBoardItemProp {
+    winner: Player;
+    rank: number;
+}
+
+const DixitGameRank = () => {
     const {dixitId, playerId} = useDixitContext();
     const [gameState, setGameState] = useState<GameState>(undefined);
     const [winners, setWinners] = useState<Player[]>([]);
@@ -34,7 +39,6 @@ const Rank = () => {
     }
 
     const ScoreBoard = () => {
-        let rank: number = 1;
         return <table className="dixit-score-board">
             <thead>
             <tr style={{backgroundColor: "#CFC5A5"}}>
@@ -45,17 +49,23 @@ const Rank = () => {
             </thead>
             <tbody>
             {
-                winners.map(winner =>
-                    <tr className={winner.color}>
-                        <td>{rank++}</td>
-                        <td>{winner.name}</td>
-                        <td>{winner.score}</td>
-                    </tr>
-                )
+                winners.map((winner, rank) => <ScoreBoardItem winner={winner} rank={rank}/>)
             }
             </tbody>
         </table>;
     }
+
+    const ScoreBoardItem = (prop: ScoreBoardItemProp) => {
+        const winner: Player = prop.winner;
+        const rank: number = prop.rank;
+        return (
+            <tr className={winner.color}>
+                <td>{(rank + 1)}</td>
+                <td>{winner.name}</td>
+                <td>{winner.score}</td>
+            </tr>
+        );
+    };
 
     const isGameOver: boolean = GAME_OVER === gameState;
     if (isGameOver) {
@@ -64,4 +74,4 @@ const Rank = () => {
     return <></>
 }
 
-export default Rank;
+export default DixitGameRank;

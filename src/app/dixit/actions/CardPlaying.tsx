@@ -1,21 +1,24 @@
 import {PlayCardDescription} from "../cards/descriptions/CardDescription";
 import React, {useEffect, useState} from "react";
-import Card from "../model/domain/Card";
-import {CARD_PLAYING, RoundState} from "../model/domain/RoundState";
+import Card from "../model/Card";
+import {CARD_PLAYING, RoundState} from "../model/RoundState";
 import EventNotice from "../EventNotice";
 import HandCards from "../cards/handcards/HandCards";
 import {dixitService} from "../services/services";
 import {Subscription} from "rxjs";
-import DixitRoundCardPlayingEvent from "../model/events/DixitRoundCardPlayingEvent";
+import DixitRoundCardPlayingEvent from "../events/roundstate/DixitRoundCardPlayingEvent";
 import {DixitRequest} from "../services/DixitService";
 import {useDixitContext} from "../Dixit";
+import {DixitContextProp} from "../DixitContext";
+import DixitDuringRoundCardPlayingEvent from "../events/during/DixitDuringRoundCardPlayingEvent";
+import PlayCard from "../model/PlayCard";
 
-let rounds: number = 0;
-let roundStateBackup: RoundState = undefined;
-const PlayCard = () => {
-    const {dixitId, playerId} = useDixitContext();
-    const [roundState, setRoundState] = useState<RoundState>(roundStateBackup);
+const CardPlaying = () => {
+    const [rounds, setRounds] = useState<number>(0);
+    const {dixitId, playerId}: DixitContextProp = useDixitContext();
+    const [roundState, setRoundState] = useState<RoundState>(undefined);
     const [handCards, setHandCards] = useState<Card[]>([]);
+    const [playCards, setPlayCards] = useState<PlayCard[]>([]);
     const [selectedCard, setSelectedCard] = useState<Card | undefined>(undefined);
     const subscriptions: Array<Subscription> = [];
 
@@ -28,13 +31,18 @@ const PlayCard = () => {
 
     const subscribeEvents = () => {
         subscriptions.push(dixitService.subscribeToDixitCardPlayingEvent(dixitId, playerId, onDixitCardPlaying));
+        subscriptions.push(dixitService.subscribeToDixitDuringRoundCardPlayingEvent(dixitId, playerId, onDixitDuringCardPlaying));
     }
 
     const onDixitCardPlaying = (dixitRoundCardPlayingEvent: DixitRoundCardPlayingEvent) => {
-        rounds = dixitRoundCardPlayingEvent.rounds;
-        roundStateBackup = dixitRoundCardPlayingEvent.roundState;
-        setRoundState(roundStateBackup);
+        // show story view
+        setRounds(dixitRoundCardPlayingEvent.rounds);
+        setRoundState(dixitRoundCardPlayingEvent.roundState);
         setHandCards(dixitRoundCardPlayingEvent.handCards);
+    }
+
+    const onDixitDuringCardPlaying = (dixitDuringRoundCardPlayingEvent: DixitDuringRoundCardPlayingEvent) => {
+        setPlayCards(dixitDuringRoundCardPlayingEvent.playCards);
     }
 
     const unsubscribeEvents = () => {
@@ -42,17 +50,14 @@ const PlayCard = () => {
     }
 
     const onPlayCardConfirm = (cardId: number) => {
-        let request: DixitRequest = new DixitRequest(cardId);
-        dixitService.playCard(dixitId, rounds, playerId, request)
-            .then(() => {
-                setHandCards([]);
-                setSelectedCard(undefined);
-                setRoundState(undefined);
-            });
+        dixitService.playCard(dixitId, rounds, playerId, new DixitRequest(cardId))
+            .then(() => setHandCards([]))
+            .then(() => setSelectedCard(undefined))
+            .then(() => setRoundState(undefined));
     }
 
     const onPlayCardCancel = () => {
-        setRoundState(roundStateBackup);
+        setRoundState(CARD_PLAYING);
         setSelectedCard(undefined);
     }
 
@@ -77,4 +82,4 @@ const PlayCard = () => {
     return <></>
 }
 
-export default PlayCard;
+export default CardPlaying;

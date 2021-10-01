@@ -1,6 +1,6 @@
-import Player from "../domain/Player";
-import Event from "./Event";
-import {GameState} from "../domain/GameState";
+import Player from "../../model/Player";
+import Event from "../Event";
+import {GameState} from "../../model/GameState";
 
 export default class DixitGameOverEvent extends Event {
     constructor(public readonly gameId: string,

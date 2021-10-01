@@ -1,6 +1,6 @@
 import './DisplayCard.scss';
 import React from "react";
-import Card from "../model/domain/Card";
+import Card from "../model/Card";
 
 
 const DisplayCard = (prop: { card: Card }) => {

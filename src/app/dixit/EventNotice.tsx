@@ -1,6 +1,6 @@
 import './EventNotice.scss';
 import React from "react";
-import {CARD_PLAYING, PLAYER_GUESSING, RoundState, STORY_TELLING} from "./model/domain/RoundState";
+import {CARD_PLAYING, PLAYER_GUESSING, RoundState, STORY_TELLING} from "./model/RoundState";
 
 const EventNotice = (prop: { dixitState: RoundState }) => {
     const dixitState: RoundState = prop.dixitState;

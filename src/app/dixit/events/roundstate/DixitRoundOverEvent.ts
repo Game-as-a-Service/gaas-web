@@ -1,13 +1,13 @@
-import Card from "../domain/Card";
-import Event from "./Event";
-import {RoundState} from "../domain/RoundState";
+import Event from "../Event";
+import Player from "../../model/Player";
+import {RoundState} from "../../model/RoundState";
 
-export default class DixitRoundCardPlayingEvent extends Event {
+export default class DixitRoundOverEvent extends Event {
     constructor(public readonly gameId: string,
                 public readonly rounds: number,
                 public readonly playerId: string,
                 public readonly roundState: RoundState,
-                public readonly handCards: Array<Card>) {
+                public readonly players: Array<Player>) {
         super(gameId, rounds, playerId);
     }
 }

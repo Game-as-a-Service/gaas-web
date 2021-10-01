@@ -1,20 +1,20 @@
-import {StoryDescription} from "../cards/descriptions/CardDescription";
 import React, {useEffect, useState} from "react";
-import Card from "../model/domain/Card";
-import {RoundState, STORY_TELLING} from "../model/domain/RoundState";
+import {StoryDescription} from "../cards/descriptions/CardDescription";
+import Card from "../model/Card";
+import {RoundState, STORY_TELLING} from "../model/RoundState";
 import EventNotice from "../EventNotice";
 import HandCards from "../cards/handcards/HandCards";
 import {TellStoryRequest} from "../services/DixitService";
 import {dixitService} from "../services/services";
-import DixitRoundStoryTellingEvent from "../model/events/DixitRoundStoryTellingEvent";
+import DixitRoundStoryTellingEvent from "../events/roundstate/DixitRoundStoryTellingEvent";
 import {Subscription} from "rxjs";
 import {useDixitContext} from "../Dixit";
+import {DixitContextProp} from "../DixitContext";
 
-let rounds: number = 0;
-let roundStateBackup: RoundState = undefined;
-const Story = () => {
-    const {dixitId, playerId} = useDixitContext();
-    const [roundState, setRoundState] = useState<RoundState>(roundStateBackup);
+const StoryTelling = () => {
+    const [rounds, setRounds] = useState<number>(0);
+    const {dixitId, playerId}: DixitContextProp = useDixitContext();
+    const [roundState, setRoundState] = useState<RoundState>(undefined);
     const [handCards, setHandCards] = useState<Card[]>([]);
     const [selectedCard, setSelectedCard] = useState<Card | undefined>(undefined);
     const subscriptions: Array<Subscription> = [];
@@ -31,10 +31,9 @@ const Story = () => {
     }
 
     const onDixitStoryTelling = (dixitStoryTellingEvent: DixitRoundStoryTellingEvent) => {
-        rounds = dixitStoryTellingEvent.rounds;
-        roundStateBackup = dixitStoryTellingEvent.roundState;
-        setRoundState(roundStateBackup);
-        setHandCards(dixitStoryTellingEvent.handCards);
+        setRounds(dixitStoryTellingEvent.rounds);
+        setRoundState(dixitStoryTellingEvent.roundState);
+        setHandCards(dixitStoryTellingEvent.storyteller.handCards);
     }
 
     const unsubscribeEvents = () => {
@@ -43,18 +42,15 @@ const Story = () => {
 
     const onStoryConfirm = (cardId: number, storyPhrase?: string) => {
         if (storyPhrase) {
-            let request: TellStoryRequest = new TellStoryRequest(storyPhrase, cardId);
-            dixitService.tellStory(dixitId, rounds, playerId, request)
-                .then(() => {
-                    setHandCards([]);
-                    setSelectedCard(undefined);
-                    setRoundState(undefined);
-                });
+            dixitService.tellStory(dixitId, rounds, playerId, new TellStoryRequest(storyPhrase, cardId))
+                .then(() => setHandCards([]))
+                .then(() => setSelectedCard(undefined))
+                .then(() => setRoundState(undefined));
         }
     }
 
     const onStoryCancel = () => {
-        setRoundState(roundStateBackup);
+        setRoundState(STORY_TELLING);
         setSelectedCard(undefined);
     }
 
@@ -79,4 +75,4 @@ const Story = () => {
     return <></>
 }
 
-export default Story;
+export default StoryTelling;

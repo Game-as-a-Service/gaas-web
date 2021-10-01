@@ -1,6 +1,6 @@
-import PlayCard from "../domain/PlayCard";
-import Event from "./Event";
-import {RoundState} from "../domain/RoundState";
+import PlayCard from "../../model/PlayCard";
+import Event from "../Event";
+import {RoundState} from "../../model/RoundState";
 
 export default class DixitRoundPlayerGuessingEvent extends Event {
     constructor(public readonly gameId: string,

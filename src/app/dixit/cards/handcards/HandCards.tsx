@@ -1,7 +1,7 @@
 import './HandCards.scss';
-import {CARD_PLAYING, RoundState, STORY_TELLING} from "../../model/domain/RoundState";
+import {CARD_PLAYING, RoundState, STORY_TELLING} from "../../model/RoundState";
 import React from "react";
-import Card from "../../model/domain/Card";
+import Card from "../../model/Card";
 
 interface HandCardsProp {
     dixitState: RoundState;

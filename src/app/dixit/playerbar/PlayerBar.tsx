@@ -1,17 +1,18 @@
 import './PlayerBar.scss';
 import Logo from "../logo/Logo";
-import Player from "../model/domain/Player";
+import Player from "../model/Player";
 import {useEffect, useState} from "react";
-import {RoundState} from "../model/domain/RoundState";
-import {GameState} from "../model/domain/GameState";
+import {RoundState} from "../model/RoundState";
+import {GameState} from "../model/GameState";
 import {Subscription} from "rxjs";
 import {dixitService} from "../services/services";
-import DixitGameStartedEvent from "../model/events/DixitGameStartedEvent";
-import DixitRoundOverEvent from "../model/events/DixitRoundOverEvent";
+import DixitGameStartedEvent from "../events/gamestate/DixitGameStartedEvent";
+import DixitRoundOverEvent from "../events/roundstate/DixitRoundOverEvent";
 import {useDixitContext} from "../Dixit";
+import {DixitContextProp} from "../DixitContext";
 
 const PlayerBar = () => {
-    const {dixitId, playerId} = useDixitContext();
+    const {dixitId, playerId}: DixitContextProp  = useDixitContext();
     // When GameState === STARTED，Then set players
     const [gameState, setGameState] = useState<GameState>(undefined);
     // When RoundState === ROUND_OVER，Then reset players

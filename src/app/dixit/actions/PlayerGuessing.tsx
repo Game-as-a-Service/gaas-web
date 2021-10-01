@@ -1,22 +1,25 @@
 import React, {useEffect, useState} from "react";
-import {PLAYER_GUESSING, RoundState} from "../model/domain/RoundState";
-import PlayCard from "../model/domain/PlayCard";
-import Card from "../model/domain/Card";
+import {PLAYER_GUESSING, RoundState} from "../model/RoundState";
+import PlayCard from "../model/PlayCard";
+import Card from "../model/Card";
 import EventNotice from "../EventNotice";
 import PlayCards from "../cards/handcards/PlayCards";
 import {GuessDescription} from "../cards/descriptions/CardDescription";
 import {dixitService} from "../services/services";
 import {Subscription} from "rxjs";
-import DixitRoundPlayerGuessingEvent from "../model/events/DixitRoundPlayerGuessingEvent";
+import DixitRoundPlayerGuessingEvent from "../events/roundstate/DixitRoundPlayerGuessingEvent";
 import {DixitRequest} from "../services/DixitService";
 import {useDixitContext} from "../Dixit";
+import {DixitContextProp} from "../DixitContext";
+import DixitDuringRoundPlayerGuessingEvent from "../events/during/DixitDuringRoundPlayerGuessingEvent";
+import Guess from "../model/Guess";
 
-let rounds: number = 0;
-let roundStateBackup: RoundState = undefined;
-const Guess = () => {
-    const {dixitId, playerId} = useDixitContext();
-    const [roundState, setRoundState] = useState<RoundState>(roundStateBackup);
+const PlayerGuessing = () => {
+    const [rounds, setRounds] = useState<number>(0);
+    const {dixitId, playerId}: DixitContextProp = useDixitContext();
+    const [roundState, setRoundState] = useState<RoundState>(undefined);
     const [playCards, setPlayCards] = useState<PlayCard[]>([]);
+    const [guesses, setGuesses] = useState<Guess[]>([]);
     const [selectedCard, setSelectedCard] = useState<Card | undefined>(undefined);
     const subscriptions: Array<Subscription> = [];
 
@@ -29,13 +32,17 @@ const Guess = () => {
 
     const subscribeEvents = () => {
         subscriptions.push(dixitService.subscribeToDixitPlayerGuessingEvent(dixitId, playerId, onDixitPlayerGuessing));
+        subscriptions.push(dixitService.subscribeToDixitDuringRoundPlayerGuessingEvent(dixitId, playerId, onDixitDuringPlayerGuessing));
     }
 
     const onDixitPlayerGuessing = (dixitRoundPlayerGuessingEvent: DixitRoundPlayerGuessingEvent) => {
-        rounds = dixitRoundPlayerGuessingEvent.rounds;
-        roundStateBackup = dixitRoundPlayerGuessingEvent.roundState;
-        setRoundState(roundStateBackup);
+        setRounds(dixitRoundPlayerGuessingEvent.rounds);
+        setRoundState(dixitRoundPlayerGuessingEvent.roundState);
         setPlayCards(dixitRoundPlayerGuessingEvent.playCards);
+    }
+
+    const onDixitDuringPlayerGuessing = (dixitDuringRoundPlayerGuessingEvent: DixitDuringRoundPlayerGuessingEvent) => {
+        setGuesses(dixitDuringRoundPlayerGuessingEvent.guesses);
     }
 
     const unsubscribeEvents = () => {
@@ -45,15 +52,13 @@ const Guess = () => {
     const onGuessConfirm = (cardId: number) => {
         let request: DixitRequest = new DixitRequest(cardId);
         dixitService.guessStory(dixitId, rounds, playerId, request)
-            .then(() => {
-                setPlayCards([]);
-                setSelectedCard(undefined);
-                setRoundState(undefined);
-            });
+            .then(() => setPlayCards([]))
+            .then(() => setSelectedCard(undefined))
+            .then(() => setRoundState(undefined));
     }
 
     const onGuessCancel = () => {
-        setRoundState(roundStateBackup);
+        setRoundState(PLAYER_GUESSING);
         setSelectedCard(undefined);
     }
 
@@ -78,4 +83,4 @@ const Guess = () => {
     return <></>
 }
 
-export default Guess;
+export default PlayerGuessing;
