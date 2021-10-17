@@ -6,14 +6,14 @@ import EventNotice from "../EventNotice";
 import HandCards from "../cards/handcards/HandCards";
 import {dixitService} from "../../models/services/services";
 import DixitRoundStoryTellingEvent from "../../models/events/roundstate/DixitRoundStoryTellingEvent";
-import {Subscription} from "rxjs";
 import {DixitContextValue, useDixitContext} from "../Dixit";
 import Event from "../../models/events/Event";
+import DixitOverview from "../../models/DixitOverview";
+import {delay} from "../../utils/DixitUtil";
 
 const StoryTelling = () => {
     const {dixitId, playerId, dixitOverview, setDixitOverview}: DixitContextValue = useDixitContext();
     const [selectedCard, setSelectedCard] = useState<Card | undefined>(undefined);
-    const subscriptions: Array<Subscription> = [];
 
     useEffect(() => {
         subscribeEvents();
@@ -23,38 +23,61 @@ const StoryTelling = () => {
     }, []);
 
     const subscribeEvents = () => {
-        subscriptions.push(dixitService.subscribeToDixitStoryTellingEvent(dixitId, playerId, onDixitStoryTelling));
+        dixitService.subscribeToDixitStoryTellingEvent(dixitId, playerId, onDixitStoryTelling);
     }
 
     const onDixitStoryTelling = {
         handleEvent: (event: Event) => {
             if (event instanceof DixitRoundStoryTellingEvent) {
-                const dixitStoryTellingEvent: DixitRoundStoryTellingEvent = event as DixitRoundStoryTellingEvent;
-                setDixitOverview({
-                    ...dixitOverview,
-                    roundState: dixitStoryTellingEvent.roundState,
-                    rounds: dixitStoryTellingEvent.rounds,
-                    handCards: dixitStoryTellingEvent.storyteller.handCards
-                });
-                dixitService.onEventHandled(event);
+                if (event.rounds === 1) {
+                    const dixitStoryTellingEvent: DixitRoundStoryTellingEvent = event as DixitRoundStoryTellingEvent;
+                    setDixitOverview((dixitOverview: DixitOverview) => {
+                        return {
+                            ...dixitOverview,
+                            roundState: dixitStoryTellingEvent.roundState,
+                            rounds: dixitStoryTellingEvent.rounds,
+                            handCards: dixitStoryTellingEvent.storyteller.handCards
+                        };
+                    });
+                    dixitService.onEventHandled(dixitStoryTellingEvent);
+                } else {
+                    delay(5000, () => {
+                        const dixitStoryTellingEvent: DixitRoundStoryTellingEvent = event as DixitRoundStoryTellingEvent;
+                        setDixitOverview((dixitOverview: DixitOverview) => {
+                            return {
+                                ...dixitOverview,
+                                roundState: dixitStoryTellingEvent.roundState,
+                                rounds: dixitStoryTellingEvent.rounds,
+                                handCards: dixitStoryTellingEvent.storyteller.handCards
+                            };
+                        });
+                        dixitService.onEventHandled(dixitStoryTellingEvent);
+                    });
+                }
             }
         }
     }
 
     const unsubscribeEvents = () => {
-        subscriptions.forEach(subscription => subscription.unsubscribe());
+        dixitService.clearSubscriptions();
     }
 
     const onStoryConfirm = (cardId: number, storyPhrase?: string) => {
         if (storyPhrase) {
-            dixitService.tellStory(dixitId, dixitOverview.rounds, playerId, {storyPhrase, cardId})
-                .then(() => setDixitOverview({...dixitOverview, handCards: []}))
-                .then(() => setSelectedCard(undefined));
+            dixitService.tellStory(dixitId, dixitOverview.rounds, playerId, {phrase: storyPhrase, cardId})
+                .then(() => {
+                    setDixitOverview((dixitOverview: DixitOverview) => {
+                        return {...dixitOverview, handCards: []};
+                    });
+                    setSelectedCard(undefined);
+                });
         }
     }
 
     const onStoryCancel = () => {
-        setDixitOverview({...dixitOverview, roundState: STORY_TELLING});
+        setDixitOverview((dixitOverview: DixitOverview) => {
+            return {...dixitOverview, roundState: STORY_TELLING};
+        });
         setSelectedCard(undefined);
     }
 

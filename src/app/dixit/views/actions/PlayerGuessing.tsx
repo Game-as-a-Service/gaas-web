@@ -5,16 +5,16 @@ import EventNotice from "../EventNotice";
 import PlayCards from "../cards/handcards/PlayCards";
 import {GuessDescription} from "../cards/descriptions/CardDescription";
 import {dixitService} from "../../models/services/services";
-import {Subscription} from "rxjs";
 import DixitRoundPlayerGuessingEvent from "../../models/events/roundstate/DixitRoundPlayerGuessingEvent";
 import {DixitContextValue, useDixitContext} from "../Dixit";
 import DixitDuringRoundPlayerGuessingEvent from "../../models/events/during/DixitDuringRoundPlayerGuessingEvent";
 import Event from "../../models/events/Event";
+import DixitOverview from "../../models/DixitOverview";
 
 const PlayerGuessing = () => {
     const {dixitId, playerId, dixitOverview, setDixitOverview}: DixitContextValue = useDixitContext();
     const [selectedCard, setSelectedCard] = useState<Card | undefined>(undefined);
-    const subscriptions: Array<Subscription> = [];
+
 
     useEffect(() => {
         subscribeEvents();
@@ -24,40 +24,63 @@ const PlayerGuessing = () => {
     }, []);
 
     const subscribeEvents = () => {
-        subscriptions.push(dixitService.subscribeToDixitPlayerGuessingEvent(dixitId, playerId, onDixitPlayerGuessing));
-        subscriptions.push(dixitService.subscribeToDixitDuringRoundPlayerGuessingEvent(dixitId, playerId, onDixitDuringPlayerGuessing));
+        dixitService.subscribeToDixitPlayerGuessingEvent(dixitId, playerId, onDixitPlayerGuessing);
+        dixitService.subscribeToDixitDuringRoundPlayerGuessingEvent(dixitId, playerId, onDixitDuringPlayerGuessing);
     }
 
     const onDixitPlayerGuessing = {
         handleEvent: (event: Event) => {
             if (event instanceof DixitRoundPlayerGuessingEvent) {
                 const dixitRoundPlayerGuessingEvent: DixitRoundPlayerGuessingEvent = event as DixitRoundPlayerGuessingEvent;
-                setDixitOverview({
-                    ...dixitOverview,
-                    roundState: dixitRoundPlayerGuessingEvent.roundState,
-                    rounds: dixitRoundPlayerGuessingEvent.rounds,
-                    playCards: dixitRoundPlayerGuessingEvent.playCards
+                setDixitOverview((dixitOverview: DixitOverview) => {
+                    return {
+                        ...dixitOverview,
+                        roundState: dixitRoundPlayerGuessingEvent.roundState,
+                        rounds: dixitRoundPlayerGuessingEvent.rounds,
+                        playCards: dixitRoundPlayerGuessingEvent.playCards
+                    };
                 });
                 dixitService.onEventHandled(event);
             }
         }
     }
 
-    const onDixitDuringPlayerGuessing = (dixitDuringRoundPlayerGuessingEvent: DixitDuringRoundPlayerGuessingEvent) => {
+    const onDixitDuringPlayerGuessing = {
+        handleEvent: (event: Event) => {
+            if (event instanceof DixitDuringRoundPlayerGuessingEvent) {
+                const dixitDuringRoundPlayerGuessingEvent: DixitDuringRoundPlayerGuessingEvent = event as DixitDuringRoundPlayerGuessingEvent;
+                setDixitOverview((dixitOverview: DixitOverview) => {
+                    return {
+                        ...dixitOverview,
+                        rounds: dixitDuringRoundPlayerGuessingEvent.rounds,
+                        playCards: dixitDuringRoundPlayerGuessingEvent.playCards,
+                        guesses: dixitDuringRoundPlayerGuessingEvent.guesses
+                    };
+                });
+                dixitService.onEventHandled(event);
+            }
+        }
     }
 
     const unsubscribeEvents = () => {
-        subscriptions.forEach(subscription => subscription.unsubscribe());
+        dixitService.clearSubscriptions();
     }
 
     const onGuessConfirm = (cardId: number) => {
         dixitService.guessStory(dixitId, dixitOverview.rounds, playerId, {cardId})
-            .then(() => setDixitOverview({...dixitOverview, playCards: []}))
-            .then(() => setSelectedCard(undefined));
+            .then(() => {
+                setDixitOverview((dixitOverview: DixitOverview) => {
+                    return {...dixitOverview, playCards: []};
+                });
+                setSelectedCard(undefined);
+            });
     }
 
     const onGuessCancel = () => {
-        setDixitOverview({...dixitOverview, roundState: PLAYER_GUESSING});
+        setDixitOverview((dixitOverview: DixitOverview) => {
+            return {...dixitOverview, roundState: PLAYER_GUESSING};
+        });
+        setSelectedCard(undefined);
     }
 
     const onPlayCardClick = (e: React.MouseEvent<HTMLElement>, playCardId: number) => {

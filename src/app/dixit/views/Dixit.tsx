@@ -9,20 +9,20 @@ import DixitRanking from "./actions/DixitRanking";
 import {dixitService} from "../models/services/services";
 import DixitOverview from "../models/DixitOverview";
 
+type DixitOverviewState = DixitOverview | ((prevDixitOverview: DixitOverview) => DixitOverview);
 
 export interface DixitContextValue {
     dixitId: string,
     playerId: string,
     dixitOverview: DixitOverview,
-    setDixitOverview: (dixitOverview: DixitOverview) => void
+    setDixitOverview: (dixitOverviewState: DixitOverviewState) => void;
 }
 
 export const DixitContext = createContext<DixitContextValue>({
     dixitId: 'dixitId',
     playerId: '0',
     dixitOverview: DixitOverview.defaultDixitOverview,
-    setDixitOverview(dixitOverview: DixitOverview): void {
-    }
+    setDixitOverview: () => void {}
 });
 
 export const useDixitContext = () => {
@@ -39,7 +39,8 @@ const Dixit = () => {
     useEffect(() => {
         if (dixitOverview === DixitOverview.defaultDixitOverview) {
             dixitService.getDixitOverview(dixitId, playerId)
-                .then(setDixitOverview);
+                .then(setDixitOverview)
+                .catch(()=> dixitService.initializeDixit());
         }
     }, [dixitOverview, dixitId, playerId]);
 

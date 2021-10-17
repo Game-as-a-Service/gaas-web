@@ -20,7 +20,7 @@ const HandCards = ({dixitState, handCards, onHandCardClick}: HandCardsProp) => {
                 <div className="dixit-cards">
                     {
                         handCards.map(handCard => {
-                            return <img className="dixit-card" alt="card"
+                            return <img key={handCard.id} className="dixit-card" alt="card"
                                         src={`data:image/png;base64, ${handCard.image}`}
                                         onClick={e => onHandCardClick(e, handCard.id)}/>
                         })
