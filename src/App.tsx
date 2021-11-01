@@ -1,13 +1,22 @@
-import React from 'react';
-import './App.css';
-import Dixit from './app/dixit/Dixit';
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route
+} from 'react-router-dom';
+import {Room} from "./app/gaas-lobby/room/Room";
+import {Lobby} from "./app/gaas-lobby/lobby/Lobby";
 
 function App() {
-  return (
-    <div className="App">
-      <Dixit/>
-    </div>
-  );
+    return (
+        <Router>
+            <div className='App'>
+                <Switch>
+                    <Route path='/room/:roomId' component={Room}/>
+                    <Route path='/' component={Lobby}/>
+                </Switch>
+            </div>
+        </Router>
+    );
 }
 
 export default App;
