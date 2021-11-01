@@ -1,111 +1,73 @@
 import {PlayCardDescription} from "../cards/descriptions/CardDescription";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import Card from "../../models/model/Card";
-import {CARD_PLAYING} from "../../models/model/RoundState";
-import EventNotice from "../EventNotice";
+import Notification from "../Notification";
 import HandCards from "../cards/handcards/HandCards";
 import {dixitService} from "../../models/services/services";
-import DixitRoundCardPlayingEvent from "../../models/events/roundstate/DixitRoundCardPlayingEvent";
 import {DixitContextValue, useDixitContext} from "../Dixit";
-import DixitDuringRoundCardPlayingEvent from "../../models/events/during/DixitDuringRoundCardPlayingEvent";
-import Event from "../../models/events/Event";
 import DixitOverview from "../../models/DixitOverview";
+import PlayCard from "../../models/model/PlayCard";
+import './CardPlaying.scss';
 
 const CardPlaying = () => {
-    const {dixitId, playerId, dixitOverview, setDixitOverview}: DixitContextValue = useDixitContext();
+    const {dixitId, playerId, dixitOverview}: DixitContextValue = useDixitContext();
+    const {rounds, handCards, storyteller, story, playCards}: DixitOverview = dixitOverview;
     const [selectedCard, setSelectedCard] = useState<Card | undefined>(undefined);
 
-
-    useEffect(() => {
-        subscribeEvents();
-        return () => {
-            unsubscribeEvents();
-        };
-    }, []);
-
-    const subscribeEvents = () => {
-        dixitService.subscribeToDixitCardPlayingEvent(dixitId, playerId, onDixitCardPlaying);
-        dixitService.subscribeToDixitDuringRoundCardPlayingEvent(dixitId, playerId, onDixitDuringCardPlaying);
-    }
-
-    const onDixitCardPlaying = {
-        handleEvent: (event: Event) => {
-            if (event instanceof DixitRoundCardPlayingEvent) {
-                const dixitRoundCardPlayingEvent: DixitRoundCardPlayingEvent = event as DixitRoundCardPlayingEvent;
-                setDixitOverview((dixitOverview: DixitOverview) => {
-                    return {
-                        ...dixitOverview,
-                        story: dixitRoundCardPlayingEvent.story,
-                        roundState: dixitRoundCardPlayingEvent.roundState,
-                        rounds: dixitRoundCardPlayingEvent.rounds,
-                        handCards: dixitRoundCardPlayingEvent.handCards
-                    };
-                });
-                dixitService.onEventHandled(event);
-            }
-        }
-    }
-
-    const onDixitDuringCardPlaying = {
-        handleEvent: (event: Event) => {
-            if (event instanceof DixitDuringRoundCardPlayingEvent) {
-                const dixitDuringRoundCardPlayingEvent: DixitDuringRoundCardPlayingEvent = event as DixitDuringRoundCardPlayingEvent;
-                setDixitOverview((dixitOverview: DixitOverview) => {
-                    return {
-                        ...dixitOverview,
-                        rounds: dixitDuringRoundCardPlayingEvent.rounds,
-                        playCards: dixitDuringRoundCardPlayingEvent.playCards
-                    };
-                });
-                dixitService.onEventHandled(event);
-            }
-        }
-    }
-
-    const unsubscribeEvents = () => {
-        dixitService.clearSubscriptions();
-    }
-
     const onPlayCardConfirm = (cardId: number) => {
-        dixitService.playCard(dixitId, dixitOverview.rounds, playerId, {cardId})
-            .then(() => {
-                setDixitOverview((dixitOverview: DixitOverview) => {
-                    return {...dixitOverview, handCards: []};
-                });
-                setSelectedCard(undefined);
-            });
+        dixitService.playCard(dixitId, rounds, playerId, {cardId})
+            .then();
     }
 
     const onPlayCardCancel = () => {
-        setDixitOverview((dixitOverview: DixitOverview) => {
-            return {...dixitOverview, roundState: CARD_PLAYING};
-        });
         setSelectedCard(undefined);
     }
 
-    const onHandCardClick = (e: React.MouseEvent<HTMLElement>, handCardId: number) => {
-        const card: Card | undefined = dixitOverview.handCards.find(card => card.id === handCardId);
-        setSelectedCard(card);
+    const onHandCardClick = (handCard: Card) => {
+        setSelectedCard(handCard);
     }
 
-    const isCardPlaying: boolean = CARD_PLAYING === dixitOverview.roundState;
-    if (isCardPlaying) {
+    const PlayCards = () => {
+        return (
+            <div className="dixit-playCards">
+                {
+                    playCards.map(({player, card}: PlayCard) =>
+                        <div className="dixit-playCard-zone">
+                            <p key={card.id} className={player.color}>{player.name.substr(0, 7)}</p>
+                        </div>
+                    )
+                }
+            </div>
+        );
+    }
+
+    if (storyteller) {
+        const isStoryTeller: boolean = playerId === storyteller.id;
         return (
             <>
                 {
-                    selectedCard ?
-                        <PlayCardDescription card={selectedCard}
-                                             onConfirmButtonClick={onPlayCardConfirm}
-                                             onCancelButtonClick={onPlayCardCancel}/>
-                        : <EventNotice dixitState={dixitOverview.roundState}/>
+                    playCards.find(({player}: PlayCard) => player.id === playerId) ? <PlayCards/>
+                        : (
+                            <>
+                                {
+                                    selectedCard ?
+                                        <PlayCardDescription story={story}
+                                                             card={selectedCard}
+                                                             onConfirmButtonClick={onPlayCardConfirm}
+                                                             onCancelButtonClick={onPlayCardCancel}/>
+                                        : <Notification message={isStoryTeller ? `其他玩家正在打牌` : `你是玩家，請打出與謎語相似的牌`}/>
+                                }
+                                {
+                                    isStoryTeller ? <></> : <HandCards handCards={handCards}
+                                                                       onHandCardClick={onHandCardClick}/>
+                                }
+                            </>
+                        )
                 }
-                <HandCards dixitState={dixitOverview.roundState}
-                           handCards={dixitOverview.handCards}
-                           onHandCardClick={onHandCardClick}/>
             </>
         );
     }
-    return <></>;
+    return <></>
 }
 
 export default CardPlaying;

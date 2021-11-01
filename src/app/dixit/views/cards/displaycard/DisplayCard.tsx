@@ -1,6 +1,6 @@
 import './DisplayCard.scss';
 import React from "react";
-import Card from "../../models/model/Card";
+import Card from "../../../models/model/Card";
 
 const DisplayCard = ({card}: { card: Card }) => {
     return (

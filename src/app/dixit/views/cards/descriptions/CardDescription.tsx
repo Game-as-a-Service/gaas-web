@@ -1,17 +1,19 @@
 import './CardDescription.scss';
 import React, {useState} from "react";
 import Card from "../../../models/model/Card";
-import DisplayCard from "../../displaycard/DisplayCard";
+import DisplayCard from "../displaycard/DisplayCard";
 import CardDecision from "../decisons/CardDecision";
+import Story from "../../../models/model/Story";
 
 interface CardDescriptionProp {
+    story?: Story
     card: Card;
     onConfirmButtonClick: (cardId: number, storyPhrase?: string) => void;
     onCancelButtonClick: () => void;
 }
 
 const StoryDescription = ({card, onConfirmButtonClick, onCancelButtonClick}: CardDescriptionProp) => {
-    const [storyPhrase, setStoryPhrase] = useState<string>("");
+    const [storyPhrase, setStoryPhrase] = useState<string>('');
 
     const onStoryPhraseChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setStoryPhrase(e.target.value);
@@ -28,11 +30,11 @@ const StoryDescription = ({card, onConfirmButtonClick, onCancelButtonClick}: Car
     );
 }
 
-const PlayCardDescription = ({card, onConfirmButtonClick, onCancelButtonClick}: CardDescriptionProp) => {
+const PlayCardDescription = ({story, card, onConfirmButtonClick, onCancelButtonClick}: CardDescriptionProp) => {
     return (
         <>
             <DisplayCard card={card}/>
-            <span className="dixit-card-description">打它？</span>
+            <span className="dixit-card-description">{`謎語: ${story?.phrase}`}</span>
             <CardDecision className="dixit-card-decision"
                           onConfirm={() => onConfirmButtonClick(card.id)} onCancel={onCancelButtonClick}/>
         </>

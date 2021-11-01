@@ -1,13 +1,9 @@
 import './Dixit.scss';
-import React, {createContext, useContext, useEffect, useState} from "react";
+import React, {createContext, useCallback, useContext, useEffect, useState} from "react";
 import PlayerBar from "./playerbar/PlayerBar";
-import StoryTelling from "./actions/StoryTelling";
-import CardPlaying from './actions/CardPlaying';
-import PlayerGuessing from "./actions/PlayerGuessing";
-import DixitScoring from "./actions/DixitScoring";
-import DixitRanking from "./actions/DixitRanking";
 import {dixitService} from "../models/services/services";
 import DixitOverview from "../models/DixitOverview";
+import Playground from "./Playground";
 
 type DixitOverviewState = DixitOverview | ((prevDixitOverview: DixitOverview) => DixitOverview);
 
@@ -35,24 +31,25 @@ const Dixit = () => {
     const playerId: string = port.charAt(port.length - 1);
     const [dixitOverview, setDixitOverview] = useState<DixitOverview>(DixitOverview.defaultDixitOverview);
     const dixitContext: DixitContextValue = {dixitId, playerId, dixitOverview, setDixitOverview};
+    const dixitConnectCallback = useCallback(() => {
+        dixitService.getDixitOverview(dixitId, playerId)
+            .then((dixitOverview) => {
+                dixitOverview.players.sort((playerA, playerB) => playerA.score === playerB.score ? playerA.id.localeCompare(playerB.id) : playerB.score - playerA.score);
+                dixitOverview.winners.sort((winnerA, winnerB) => winnerA.score === winnerB.score ? winnerA.id.localeCompare(winnerB.id) : winnerB.score - winnerA.score);
+                setDixitOverview(dixitOverview);
+            })
+            .catch(() => dixitService.initializeDixit());
+    }, [setDixitOverview, dixitId, playerId]);
 
     useEffect(() => {
-        if (dixitOverview === DixitOverview.defaultDixitOverview) {
-            dixitService.getDixitOverview(dixitId, playerId)
-                .then(setDixitOverview)
-                .catch(()=> dixitService.initializeDixit());
-        }
-    }, [dixitOverview, dixitId, playerId]);
+        dixitService.dixitConnectCallback = dixitConnectCallback;
+    }, [dixitConnectCallback]);
 
     return (
         <DixitContext.Provider value={dixitContext}>
             <div className="dixit">
                 <PlayerBar/>
-                <StoryTelling/>
-                <CardPlaying/>
-                <PlayerGuessing/>
-                <DixitScoring/>
-                <DixitRanking/>
+                <Playground/>
             </div>
         </DixitContext.Provider>
     );

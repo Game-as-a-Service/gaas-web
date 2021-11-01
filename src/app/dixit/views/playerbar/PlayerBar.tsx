@@ -1,46 +1,11 @@
 import './PlayerBar.scss';
 import Logo from "../logo/Logo";
 import Player from "../../models/model/Player";
-import React, {useEffect} from "react";
-import {dixitService} from "../../models/services/services";
+import React from "react";
 import {DixitContextValue, useDixitContext} from "../Dixit";
-import Event from "../../models/events/Event";
-import DixitGameStartedEvent from "../../models/events/gamestate/DixitGameStartedEvent";
-import DixitOverview from "../../models/DixitOverview";
 
 const PlayerBar = () => {
-    const {dixitId, playerId, dixitOverview, setDixitOverview}: DixitContextValue = useDixitContext();
-
-    useEffect(() => {
-        subscribeEvents();
-        return () => {
-            unsubscribeEvents();
-        };
-    }, []);
-
-    const subscribeEvents = () => {
-        dixitService.subscribeToDixitGameStartedEvent(dixitId, playerId, onDixitGameStarted);
-    }
-
-    const onDixitGameStarted = {
-        handleEvent: (event: Event) => {
-            if (event instanceof DixitGameStartedEvent) {
-                const dixitGameStartedEvent: DixitGameStartedEvent = event as DixitGameStartedEvent;
-                setDixitOverview((dixitOverview: DixitOverview) => {
-                    return {
-                        ...dixitOverview,
-                        gameState: dixitGameStartedEvent.gameState,
-                        players: dixitGameStartedEvent.players
-                    };
-                });
-                dixitService.onEventHandled(event);
-            }
-        }
-    }
-
-    const unsubscribeEvents = () => {
-        dixitService.clearSubscriptions();
-    }
+    const {dixitOverview}: DixitContextValue = useDixitContext();
 
     const PlayerItem = ({player}: { player: Player }) => {
         return (

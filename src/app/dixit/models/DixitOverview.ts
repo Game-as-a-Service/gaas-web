@@ -1,5 +1,5 @@
 import {GameState, PREPARING} from "./model/GameState";
-import {RoundState} from "./model/RoundState";
+import {NONE, RoundState} from "./model/RoundState";
 import Player from "./model/Player";
 import Card from "./model/Card";
 import Story from "./model/Story";
@@ -9,7 +9,7 @@ import Guess from "./model/Guess";
 export default class DixitOverview {
     public static readonly defaultDixitOverview: DixitOverview = new DixitOverview({
         gameState: PREPARING,
-        roundState: undefined,
+        roundState: NONE,
         rounds: 0,
         players: [],
         storyteller: undefined,
@@ -22,19 +22,19 @@ export default class DixitOverview {
     public gameState: GameState;
     public roundState: RoundState;
     public rounds: number;
-    public players: Player[];
+    public players: Array<Player>;
     public storyteller?: Player;
-    public handCards: Card[];
+    public handCards: Array<Card>;
     public story?: Story;
-    public playCards: PlayCard[];
-    public guesses: Guess[];
-    public winners: Player[];
+    public playCards: Array<PlayCard>;
+    public guesses: Array<Guess>;
+    public winners: Array<Player>;
 
     constructor({gameState, roundState, rounds, players, storyteller, handCards, story, playCards, guesses, winners}:
                     {
-                        gameState: GameState, roundState: RoundState, rounds: number, players: Player[],
-                        storyteller?: Player, handCards: Card[],
-                        story?: Story, playCards: PlayCard[], guesses: Guess[], winners: Player[]
+                        gameState: GameState, roundState: RoundState, rounds: number, players: Array<Player>,
+                        storyteller?: Player, handCards: Array<Card>
+                        story?: Story, playCards: Array<PlayCard>, guesses: Array<Guess>, winners: Array<Player>
                     }) {
         this.gameState = gameState;
         this.roundState = roundState;
