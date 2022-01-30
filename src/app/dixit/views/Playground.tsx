@@ -5,7 +5,7 @@ import PlayerGuessing from "./actions/PlayerGuessing";
 import DixitScoring from "./actions/DixitScoring";
 import DixitRanking from "./actions/DixitRanking";
 import {DixitContextValue, useDixitContext} from "./Dixit";
-import {dixitService} from "../models/services/services";
+import {dixitService} from "../services/services";
 import Event from "../models/events/Event";
 import DixitRoundScoringEvent from "../models/events/roundstate/DixitRoundScoringEvent";
 import DixitOverview from "../models/DixitOverview";

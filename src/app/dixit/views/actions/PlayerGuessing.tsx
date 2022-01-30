@@ -3,7 +3,7 @@ import Card from "../../models/model/Card";
 import Notification from "../Notification";
 import PlayCards from "../cards/handcards/PlayCards";
 import {GuessDescription} from "../cards/descriptions/CardDescription";
-import {dixitService} from "../../models/services/services";
+import {dixitService} from "../../services/services";
 import {DixitContextValue, useDixitContext} from "../Dixit";
 import DixitOverview from "../../models/DixitOverview";
 import PlayCard from "../../models/model/PlayCard";

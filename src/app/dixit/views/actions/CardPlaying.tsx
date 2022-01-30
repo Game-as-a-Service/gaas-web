@@ -3,7 +3,7 @@ import React, {useState} from "react";
 import Card from "../../models/model/Card";
 import Notification from "../Notification";
 import HandCards from "../cards/handcards/HandCards";
-import {dixitService} from "../../models/services/services";
+import {dixitService} from "../../services/services";
 import {DixitContextValue, useDixitContext} from "../Dixit";
 import DixitOverview from "../../models/DixitOverview";
 import PlayCard from "../../models/model/PlayCard";

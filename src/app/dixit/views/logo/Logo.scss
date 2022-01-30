@@ -3,6 +3,9 @@
   height: 40px;
   background-color: #AEAF7A;
   border-radius: 30px;
+  display: flex;
+  justify-content: center; /* align horizontal */
+  align-items: center; /* align vertical */
 
   .font {
     font-family: Roboto, sans-serif;

@@ -1,9 +1,10 @@
 import './Dixit.scss';
 import React, {createContext, useCallback, useContext, useEffect, useState} from "react";
 import PlayerBar from "./playerbar/PlayerBar";
-import {dixitService} from "../models/services/services";
+import {dixitService} from "../services/services";
 import DixitOverview from "../models/DixitOverview";
 import Playground from "./Playground";
+import {useParams} from "react-router-dom";
 
 type DixitOverviewState = DixitOverview | ((prevDixitOverview: DixitOverview) => DixitOverview);
 
@@ -15,8 +16,8 @@ export interface DixitContextValue {
 }
 
 export const DixitContext = createContext<DixitContextValue>({
-    dixitId: 'dixitId',
-    playerId: '0',
+    dixitId: '',
+    playerId: '',
     dixitOverview: DixitOverview.defaultDixitOverview,
     setDixitOverview: () => void {}
 });
@@ -26,20 +27,20 @@ export const useDixitContext = () => {
 };
 
 const Dixit = () => {
+    const {gameId} = useParams<{ gameId: string }>();
     const port: string = window.location.port;
-    const dixitId: string = 'dixitId';
-    const playerId: string = port.charAt(port.length - 1);
+    const playerId: string = '1';
     const [dixitOverview, setDixitOverview] = useState<DixitOverview>(DixitOverview.defaultDixitOverview);
-    const dixitContext: DixitContextValue = {dixitId, playerId, dixitOverview, setDixitOverview};
+    const dixitContext: DixitContextValue = {dixitId: gameId, playerId, dixitOverview, setDixitOverview};
     const dixitConnectCallback = useCallback(() => {
-        dixitService.getDixitOverview(dixitId, playerId)
+        dixitService.getDixitOverview(gameId, playerId)
             .then((dixitOverview) => {
                 dixitOverview.players.sort((playerA, playerB) => playerA.score === playerB.score ? playerA.id.localeCompare(playerB.id) : playerB.score - playerA.score);
                 dixitOverview.winners.sort((winnerA, winnerB) => winnerA.score === winnerB.score ? winnerA.id.localeCompare(winnerB.id) : winnerB.score - winnerA.score);
                 setDixitOverview(dixitOverview);
             })
             .catch(() => dixitService.initializeDixit());
-    }, [setDixitOverview, dixitId, playerId]);
+    }, [setDixitOverview, gameId, playerId]);
 
     useEffect(() => {
         dixitService.dixitConnectCallback = dixitConnectCallback;

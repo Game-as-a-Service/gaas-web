@@ -1,6 +1,6 @@
 /* eslint-disable indent */
 import axios from 'axios';
-import {Player, Game, GameRoom} from "../app/gaas-lobby/model/model";
+import {Player, Game, GameRoom} from "../model/model";
 
 class RoomService {
     readonly axios = axios.create({

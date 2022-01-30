@@ -1,16 +1,16 @@
 import axios, {AxiosPromise} from "axios";
 import {RxStomp, RxStompConfig} from "@stomp/rx-stomp";
-import DixitRoundStoryTellingEvent from "../events/roundstate/DixitRoundStoryTellingEvent";
+import DixitRoundStoryTellingEvent from "../models/events/roundstate/DixitRoundStoryTellingEvent";
 import {Subscription} from "rxjs";
-import DixitRoundCardPlayingEvent from "../events/roundstate/DixitRoundCardPlayingEvent";
-import DixitRoundPlayerGuessingEvent from "../events/roundstate/DixitRoundPlayerGuessingEvent";
-import DixitRoundScoringEvent from "../events/roundstate/DixitRoundScoringEvent";
-import DixitGameOverEvent from "../events/gamestate/DixitGameOverEvent";
-import DixitOverview from "../DixitOverview";
-import DixitGameStartedEvent from "../events/gamestate/DixitGameStartedEvent";
-import Event from "../events/Event";
-import {executeIfExist, generate} from "../../utils/DixitUtil";
-import {CARD_PLAYING, PLAYER_GUESSING, STORY_TELLING} from "../model/RoundState";
+import DixitRoundCardPlayingEvent from "../models/events/roundstate/DixitRoundCardPlayingEvent";
+import DixitRoundPlayerGuessingEvent from "../models/events/roundstate/DixitRoundPlayerGuessingEvent";
+import DixitRoundScoringEvent from "../models/events/roundstate/DixitRoundScoringEvent";
+import DixitGameOverEvent from "../models/events/gamestate/DixitGameOverEvent";
+import DixitOverview from "../models/DixitOverview";
+import DixitGameStartedEvent from "../models/events/gamestate/DixitGameStartedEvent";
+import Event from "../models/events/Event";
+import {executeIfExist, generate} from "../utils/DixitUtil";
+import {CARD_PLAYING, PLAYER_GUESSING, STORY_TELLING} from "../models/model/RoundState";
 
 export class DixitService {
     private readonly baseURL: string | undefined;
@@ -57,7 +57,7 @@ export class DixitService {
 
     public getDixitOverview(dixitId: string, playerId: string): Promise<DixitOverview> {
         const url: string = `${this.baseURL}/api/dixit/${dixitId}/players/${playerId}/overview`;
-        return axios.get(url)
+        return axios.get<DixitOverview>(url)
             .then(res => {
                 const dixitOverview: DixitOverview = new DixitOverview(res.data);
                 this.setupDixitRoundState(dixitOverview);
