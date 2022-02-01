@@ -5,7 +5,10 @@ const Notification = ({message}: { message: string }) => {
     return (
         <span className="notification">
                 {
-                    // This place is use to format the message instead of outside.
+                    // Since many messages shown here contain 'underscores', which must be filtered off,
+                    // we write the filter code here.
+                    //
+                    // This is not a good design choice. However, the best solution may be to filter the format from the backend API.
                     message.replaceAll("-", " ")
                         .replaceAll("_", " ")
                 }
