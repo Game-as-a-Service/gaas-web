@@ -1,0 +1,85 @@
+.player-bar {
+  width: 225px;
+  height: 100vh;
+  background-color: #403F48;
+  float: right;
+
+  .logo-bar {
+    width: 225px;
+    height: 65px;
+    background-color: #56776C;
+    display: flex;
+    justify-content: center; /* align horizontal */
+    align-items: center; /* align vertical */
+  }
+
+  .player-item {
+    width: 180px;
+    height: 50px;
+    background-color: #F0E3CA;
+    border-radius: 30px;
+    margin: 20px auto;
+    display: flex;
+    align-items: center; /* align vertical */
+
+    .font {
+      font-family: Roboto, sans-serif;
+      font-style: normal;
+      font-weight: bold;
+      font-size: 20px;
+      text-align: center;
+    }
+
+    .color {
+      @extend .font;
+      width: 30px;
+      height: 30px;
+      border-radius: 45px;
+      margin-left: 12px;
+      line-height: 30px;
+      color: #596C68;
+    }
+
+    .RED {
+      @extend .color;
+      background: #F6A9A9;
+    }
+
+    .ORANGE {
+      @extend .color;
+      background: #FFBF86;
+    }
+
+    .YELLOW {
+      @extend .color;
+      background: #FFF47D;
+    }
+
+    .GREEN {
+      @extend .color;
+      background: #C2F784;
+    }
+
+    .BLUE {
+      @extend .color;
+      background: #E4FBFF;
+    }
+
+    .VIOLET {
+      @extend .color;
+      background: #B8B5FF;
+    }
+
+    .player-name {
+      @extend .font;
+      width: 120px;
+      height: 30px;
+      margin-left: 5px;
+      background: #403F48;
+      border-radius: 20px 30px 30px 20px;
+      color: #95A792;
+      letter-spacing: 0.07em;
+    }
+  }
+
+}
