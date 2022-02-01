@@ -29,7 +29,7 @@ export const useDixitContext = () => {
 const Dixit = () => {
     const {gameId} = useParams<{ gameId: string }>();
     const port: string = window.location.port;
-    const playerId: string = '1';
+    const playerId: string = port.charAt(port.length - 1);
     const [dixitOverview, setDixitOverview] = useState<DixitOverview>(DixitOverview.defaultDixitOverview);
     const dixitContext: DixitContextValue = {dixitId: gameId, playerId, dixitOverview, setDixitOverview};
     const dixitConnectCallback = useCallback(() => {

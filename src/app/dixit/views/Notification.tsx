@@ -5,6 +5,7 @@ const Notification = ({message}: { message: string }) => {
     return (
         <span className="notification">
                 {
+                    // This place is use to format the message instead of outside.
                     message.replaceAll("-", " ")
                         .replaceAll("_", " ")
                 }

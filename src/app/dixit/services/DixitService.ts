@@ -9,19 +9,15 @@ import DixitGameOverEvent from "../models/events/gamestate/DixitGameOverEvent";
 import DixitOverview from "../models/DixitOverview";
 import DixitGameStartedEvent from "../models/events/gamestate/DixitGameStartedEvent";
 import Event from "../models/events/Event";
-import {executeIfExist, generate} from "../utils/DixitUtil";
-import {CARD_PLAYING, PLAYER_GUESSING, STORY_TELLING} from "../models/model/RoundState";
+import {executeIfExist} from "../utils/DixitUtil";
+import {EventBuffer} from "./EventBuffer";
 
 export class DixitService {
     private readonly baseURL: string | undefined;
     private readonly baseBrokerURL: string | undefined;
     private readonly rxStomp: RxStomp;
     private readonly subscriptions: Array<Subscription>;
-    private readonly eventListener: Array<DixitEventHandler>;
-    private readonly events: Array<Event>;
-    private handingEvent: boolean;
-    private readonly roundEventNames: Array<string>;
-    private nextRoundEventNameIndex: number;
+    private readonly eventBuffer: EventBuffer;
     private _dixitConnectCallback?: () => void;
 
     public constructor() {
@@ -29,12 +25,8 @@ export class DixitService {
         this.baseBrokerURL = process.env.REACT_APP_DIXIT_BROKER_SVC_BASE_URL;
         this.rxStomp = new RxStomp();
         this.connect();
-        this.events = [];
-        this.eventListener = [];
-        this.handingEvent = false;
         this.subscriptions = [];
-        this.roundEventNames = [];
-        this.nextRoundEventNameIndex = 0;
+        this.eventBuffer = new EventBuffer();
     }
 
     private connect(): void {
@@ -60,24 +52,9 @@ export class DixitService {
         return axios.get<DixitOverview>(url)
             .then(res => {
                 const dixitOverview: DixitOverview = new DixitOverview(res.data);
-                this.setupDixitRoundState(dixitOverview);
+                this.eventBuffer.setupDixitOverview(dixitOverview);
                 return dixitOverview;
             });
-    }
-
-    private setupDixitRoundState({roundState, players, playCards, guesses}: DixitOverview): void {
-        this.setupDixitRoundEventNames(players.length);
-        let currentRoundEventNameIndex: number;
-        if (STORY_TELLING === roundState) {
-            currentRoundEventNameIndex = this.roundEventNames.indexOf(DixitRoundStoryTellingEvent.name);
-        } else if (CARD_PLAYING === roundState) {
-            currentRoundEventNameIndex = this.roundEventNames.indexOf(DixitRoundCardPlayingEvent.name) + playCards.length;
-        } else if (PLAYER_GUESSING === roundState) {
-            currentRoundEventNameIndex = this.roundEventNames.indexOf(DixitRoundPlayerGuessingEvent.name) + guesses.length;
-        } else {
-            currentRoundEventNameIndex = this.roundEventNames.indexOf(DixitRoundScoringEvent.name);
-        }
-        this.nextRoundEventNameIndex = currentRoundEventNameIndex + 1 === this.roundEventNames.length ? 0 : currentRoundEventNameIndex + 1;
     }
 
     public tellStory(dixitId: string, round: number, playerId: string, request: DixitRequest): AxiosPromise {
@@ -96,113 +73,59 @@ export class DixitService {
     }
 
     public subscribeToDixitGameStartedEvent(dixitId: string, playerId: string, dixitEventHandler: DixitEventHandler): void {
-        this.eventListener.push(dixitEventHandler);
+        this.eventBuffer.subscribeEvent(dixitEventHandler);
         const topic: string = `/topic/dixit/${dixitId}/gameStates/started/players/${playerId}`;
         const subscription: Subscription = this.rxStomp.watch(topic)
-            .subscribe(res => this.onEvent(new DixitGameStartedEvent(JSON.parse(res.body))))
+            .subscribe(res => this.eventBuffer.onEvent(new DixitGameStartedEvent(JSON.parse(res.body))))
         this.subscriptions.push(subscription);
     }
 
     public subscribeToDixitStoryTellingEvent(dixitId: string, playerId: string, dixitEventHandler: DixitEventHandler): void {
-        this.eventListener.push(dixitEventHandler);
+        this.eventBuffer.subscribeEvent(dixitEventHandler);
         const topic: string = `/topic/dixit/${dixitId}/roundStates/story-telling/players/${playerId}`;
         const subscription: Subscription = this.rxStomp.watch(topic)
-            .subscribe(res => this.onEvent(new DixitRoundStoryTellingEvent(JSON.parse(res.body))));
+            .subscribe(res => this.eventBuffer.onEvent(new DixitRoundStoryTellingEvent(JSON.parse(res.body))));
         this.subscriptions.push(subscription);
     }
 
     public subscribeToDixitCardPlayingEvent(dixitId: string, playerId: string, dixitEventHandler: DixitEventHandler): void {
-        this.eventListener.push(dixitEventHandler);
+        this.eventBuffer.subscribeEvent(dixitEventHandler);
         const topic: string = `/topic/dixit/${dixitId}/roundStates/card-playing/players/${playerId}`;
         const subscription: Subscription = this.rxStomp.watch(topic)
-            .subscribe(res => this.onEvent(new DixitRoundCardPlayingEvent(JSON.parse(res.body))));
+            .subscribe(res => this.eventBuffer.onEvent(new DixitRoundCardPlayingEvent(JSON.parse(res.body))));
         this.subscriptions.push(subscription);
     }
 
     public subscribeToDixitPlayerGuessingEvent(dixitId: string, playerId: string, dixitEventHandler: DixitEventHandler): void {
-        this.eventListener.push(dixitEventHandler);
+        this.eventBuffer.subscribeEvent(dixitEventHandler);
         const topic: string = `/topic/dixit/${dixitId}/roundStates/player-guessing/players/${playerId}`;
         const subscription: Subscription = this.rxStomp.watch(topic)
-            .subscribe(res => this.onEvent(new DixitRoundPlayerGuessingEvent(JSON.parse(res.body))));
+            .subscribe(res => this.eventBuffer.onEvent(new DixitRoundPlayerGuessingEvent(JSON.parse(res.body))));
         this.subscriptions.push(subscription);
     }
 
     public subscribeToDixitScoringEvent(dixitId: string, playerId: string, dixitEventHandler: DixitEventHandler): void {
-        this.eventListener.push(dixitEventHandler);
+        this.eventBuffer.subscribeEvent(dixitEventHandler);
         const topic: string = `/topic/dixit/${dixitId}/roundStates/scoring/players/${playerId}`;
         const subscription: Subscription = this.rxStomp.watch(topic)
-            .subscribe(res => this.onEvent(new DixitRoundScoringEvent(JSON.parse(res.body))));
+            .subscribe(res => this.eventBuffer.onEvent(new DixitRoundScoringEvent(JSON.parse(res.body))));
         this.subscriptions.push(subscription);
     }
 
     public subscribeToDixitGameOverEvent(dixitId: string, playerId: string, dixitEventHandler: DixitEventHandler): void {
-        this.eventListener.push(dixitEventHandler);
+        this.eventBuffer.subscribeEvent(dixitEventHandler);
         const topic: string = `/topic/dixit/${dixitId}/gameStates/over/players/${playerId}`;
         const subscription: Subscription = this.rxStomp.watch(topic)
-            .subscribe(res => this.onEvent(new DixitGameOverEvent(JSON.parse(res.body))));
+            .subscribe(res => this.eventBuffer.onEvent(new DixitGameOverEvent(JSON.parse(res.body))));
         this.subscriptions.push(subscription);
     }
 
-    private onEvent(event: Event): void {
-        if (!this.handingEvent) {
-            this.handingEvent = true;
-            this.executeEvent(event);
-        } else {
-            this.events.push(event);
-        }
-    }
-
     public onEventHandled(event: Event): void {
-        const eventIndex = this.events.indexOf(event);
-        if (eventIndex !== -1) {
-            this.events.splice(eventIndex, 1);
-        }
-        if (this.events.length === 0) {
-            this.handingEvent = false;
-        } else {
-            const nextEvent = this.events.shift() as Event;
-            this.executeEvent(nextEvent);
-        }
-    }
-
-    private executeEvent(event: Event): void {
-        const eventName: string = event.constructor.name;
-        const nextRoundEventName: string = this.roundEventNames[this.nextRoundEventNameIndex];
-        if (eventName === nextRoundEventName) {
-            this.nextRoundEventNameIndex = this.nextRoundEventNameIndex + 1 === this.roundEventNames.length ? 0 : this.nextRoundEventNameIndex + 1;
-            this.eventListener.forEach(l => l.handleEvent(event));
-        } else {
-            this.handingEvent = false;
-            this.events.push(event);
-        }
-        if (eventName === DixitGameStartedEvent.name ||
-            eventName === DixitGameOverEvent.name) {
-            this.initDixitRoundEventNames(event);
-            this.eventListener.forEach(l => l.handleEvent(event));
-        }
-    }
-
-    private initDixitRoundEventNames(event: Event): void {
-        const eventName: string = event.constructor.name;
-        if (eventName === DixitGameStartedEvent.name) {
-            const dixitGameStartedEvent: DixitGameStartedEvent = event as DixitGameStartedEvent;
-            this.setupDixitRoundEventNames(dixitGameStartedEvent.players.length);
-        }
-    }
-
-    private setupDixitRoundEventNames(numberOfPlayers: number): void {
-        if (this.roundEventNames.length === 0) {
-            this.roundEventNames.push(DixitRoundStoryTellingEvent.name);
-            generate(DixitRoundCardPlayingEvent.name, numberOfPlayers).forEach(eventName => this.roundEventNames.push(eventName));
-            generate(DixitRoundPlayerGuessingEvent.name, numberOfPlayers).forEach(eventName => this.roundEventNames.push(eventName));
-            this.roundEventNames.push(DixitRoundScoringEvent.name);
-        }
+        this.eventBuffer.onEventHandled(event);
     }
 
     public initializeDixit(): void {
-        this.events.splice(0, this.events.length);
-        this.handingEvent = false;
-        this.nextRoundEventNameIndex = 0;
+        this.eventBuffer.initializeDixit();
     }
 
     public clearSubscriptions(): void {
