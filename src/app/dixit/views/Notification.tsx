@@ -3,16 +3,7 @@ import React from "react";
 
 const Notification = ({message}: { message: string }) => {
     return (
-        <span className="notification">
-                {
-                    // Since many messages shown here contain 'underscores', which must be filtered off,
-                    // we write the filter code here.
-                    //
-                    // This is not a good design choice. However, the best solution may be to enforce the format from the backend API.
-                    message.replaceAll("-", " ")
-                        .replaceAll("_", " ")
-                }
-                </span>
+        <span className="notification">{message}</span>
     );
 }
 

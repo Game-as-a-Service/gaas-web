@@ -1,9 +1,9 @@
 import DixitOverview from "../models/DixitOverview";
-import {CARD_PLAYING, PLAYER_GUESSING, STORY_TELLING} from "../models/model/RoundState";
-import DixitRoundStoryTellingEvent from "../models/events/roundstate/DixitRoundStoryTellingEvent";
-import DixitRoundCardPlayingEvent from "../models/events/roundstate/DixitRoundCardPlayingEvent";
-import DixitRoundPlayerGuessingEvent from "../models/events/roundstate/DixitRoundPlayerGuessingEvent";
-import DixitRoundScoringEvent from "../models/events/roundstate/DixitRoundScoringEvent";
+import {CARD_PLAYING, STORY_GUESSING, STORY_TELLING} from "../models/model/RoundState";
+import DixitRoundStoryToldEvent from "../models/events/roundstate/DixitRoundStoryToldEvent";
+import DixitRoundCardPlayedEvent from "../models/events/roundstate/DixitRoundCardPlayedEvent";
+import DixitRoundStoryGuessedEvent from "../models/events/roundstate/DixitRoundStoryGuessedEvent";
+import DixitRoundScoredEvent from "../models/events/roundstate/DixitRoundScoredEvent";
 import {generate} from "../utils/DixitUtil";
 import Event from "../models/events/Event";
 import DixitGameStartedEvent from "../models/events/gamestate/DixitGameStartedEvent";
@@ -81,23 +81,23 @@ export class EventBuffer {
         this.setupDixitRoundEventNames(players.length);
         let currentRoundEventNameIndex: number;
         if (STORY_TELLING === roundState) {
-            currentRoundEventNameIndex = this.roundEventNames.indexOf(DixitRoundStoryTellingEvent.name);
+            currentRoundEventNameIndex = this.roundEventNames.indexOf(DixitRoundStoryToldEvent.name);
         } else if (CARD_PLAYING === roundState) {
-            currentRoundEventNameIndex = this.roundEventNames.indexOf(DixitRoundCardPlayingEvent.name) + playCards.length;
-        } else if (PLAYER_GUESSING === roundState) {
-            currentRoundEventNameIndex = this.roundEventNames.indexOf(DixitRoundPlayerGuessingEvent.name) + guesses.length;
+            currentRoundEventNameIndex = this.roundEventNames.indexOf(DixitRoundCardPlayedEvent.name) + playCards.length;
+        } else if (STORY_GUESSING === roundState) {
+            currentRoundEventNameIndex = this.roundEventNames.indexOf(DixitRoundStoryGuessedEvent.name) + guesses.length;
         } else {
-            currentRoundEventNameIndex = this.roundEventNames.indexOf(DixitRoundScoringEvent.name);
+            currentRoundEventNameIndex = this.roundEventNames.indexOf(DixitRoundScoredEvent.name);
         }
         this.nextRoundEventNameIndex = currentRoundEventNameIndex + 1 === this.roundEventNames.length ? 0 : currentRoundEventNameIndex + 1;
     }
 
     public setupDixitRoundEventNames(numberOfPlayers: number): void {
         if (this.roundEventNames.length === 0) {
-            this.roundEventNames.push(DixitRoundStoryTellingEvent.name);
-            generate(DixitRoundCardPlayingEvent.name, numberOfPlayers).forEach(eventName => this.roundEventNames.push(eventName));
-            generate(DixitRoundPlayerGuessingEvent.name, numberOfPlayers).forEach(eventName => this.roundEventNames.push(eventName));
-            this.roundEventNames.push(DixitRoundScoringEvent.name);
+            this.roundEventNames.push(DixitRoundStoryToldEvent.name);
+            generate(DixitRoundCardPlayedEvent.name, numberOfPlayers).forEach(eventName => this.roundEventNames.push(eventName));
+            generate(DixitRoundStoryGuessedEvent.name, numberOfPlayers).forEach(eventName => this.roundEventNames.push(eventName));
+            this.roundEventNames.push(DixitRoundScoredEvent.name);
         }
     }
 
