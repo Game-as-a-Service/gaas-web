@@ -1,21 +1,21 @@
 import React, {useCallback, useEffect} from "react";
-import StoryTelling from "./actions/StoryTelling";
-import CardPlaying from "./actions/CardPlaying";
-import PlayerGuessing from "./actions/PlayerGuessing";
+import DixitStoryTelling from "./actions/StoryTelling";
+import DixitCardPlaying from "./actions/CardPlaying";
+import DixitStoryGuessing from "./actions/PlayerGuessing";
 import DixitScoring from "./actions/DixitScoring";
 import DixitRanking from "./actions/DixitRanking";
 import {DixitContextValue, useDixitContext} from "./Dixit";
 import {dixitService} from "../services/services";
 import Event from "../models/events/Event";
-import DixitRoundScoringEvent from "../models/events/roundstate/DixitRoundScoringEvent";
+import DixitRoundScoredEvent from "../models/events/roundstate/DixitRoundScoredEvent";
 import DixitOverview from "../models/DixitOverview";
-import DixitRoundStoryTellingEvent from "../models/events/roundstate/DixitRoundStoryTellingEvent";
+import DixitRoundStoryToldEvent from "../models/events/roundstate/DixitRoundStoryToldEvent";
 import DixitGameStartedEvent from "../models/events/gamestate/DixitGameStartedEvent";
-import DixitRoundCardPlayingEvent from "../models/events/roundstate/DixitRoundCardPlayingEvent";
-import DixitRoundPlayerGuessingEvent from "../models/events/roundstate/DixitRoundPlayerGuessingEvent";
+import DixitRoundCardPlayedEvent from "../models/events/roundstate/DixitRoundCardPlayedEvent";
+import DixitRoundStoryGuessedEvent from "../models/events/roundstate/DixitRoundStoryGuessedEvent";
 import DixitGameOverEvent from "../models/events/gamestate/DixitGameOverEvent";
-import {GAME_OVER} from "../models/model/GameState";
-import {CARD_PLAYING, PLAYER_GUESSING, SCORING, STORY_TELLING} from "../models/model/RoundState";
+import {OVER} from "../models/model/GameState";
+import {CARD_PLAYING, SCORING, STORY_GUESSING, STORY_TELLING} from "../models/model/RoundState";
 import {delay} from "../utils/DixitUtil";
 import Guess from "../models/model/Guess";
 
@@ -29,87 +29,82 @@ const Playground = () => {
         const onDixitGameStarted = {
             handleEvent: (event: Event) => {
                 if (event instanceof DixitGameStartedEvent) {
-                    const dixitGameStartedEvent: DixitGameStartedEvent = event as DixitGameStartedEvent;
-                    const {gameState, players}: DixitGameStartedEvent = dixitGameStartedEvent;
+                    const gameStartedEvent: DixitGameStartedEvent = event as DixitGameStartedEvent;
+                    const {gameState, players}: DixitGameStartedEvent = gameStartedEvent;
                     setDixitOverview((dixitOverview: DixitOverview) => {
                         return {...dixitOverview, gameState, players};
                     });
-                    dixitService.onEventHandled(dixitGameStartedEvent);
+                    dixitService.onEventHandled(gameStartedEvent);
                 }
             }
         }
 
-        const onDixitStoryTelling = {
+        const onDixitStoryTold = {
             handleEvent: (event: Event) => {
-                if (event instanceof DixitRoundStoryTellingEvent) {
-                    const dixitStoryTellingEvent: DixitRoundStoryTellingEvent = event as DixitRoundStoryTellingEvent;
+                if (event instanceof DixitRoundStoryToldEvent) {
+                    const storyToldEvent: DixitRoundStoryToldEvent = event as DixitRoundStoryToldEvent;
                     if (event.rounds === 1) {
-                        onStoryTelling(dixitStoryTellingEvent);
+                        onStoryTold(storyToldEvent);
                     } else {
-                        delay(delayTime, () => onStoryTelling(dixitStoryTellingEvent));
+                        delay(delayTime, () => onStoryTold(storyToldEvent));
                     }
                 }
             }
         }
 
-        const onStoryTelling = (dixitStoryTellingEvent: DixitRoundStoryTellingEvent) => {
-            const {rounds, roundState, storyteller, handCards}: DixitRoundStoryTellingEvent = dixitStoryTellingEvent;
+        const onStoryTold = (storyToldEvent: DixitRoundStoryToldEvent) => {
+            const {rounds, roundState, storyteller, handCards}: DixitRoundStoryToldEvent = storyToldEvent;
             setDixitOverview((dixitOverview: DixitOverview) => {
                 return {...dixitOverview, rounds, roundState, storyteller, handCards};
             });
-            dixitService.onEventHandled(dixitStoryTellingEvent);
+            dixitService.onEventHandled(storyToldEvent);
         }
 
-        const onDixitCardPlaying = {
+        const onDixitCardPlayed = {
             handleEvent: (event: Event) => {
-                if (event instanceof DixitRoundCardPlayingEvent) {
-                    const dixitRoundCardPlayingEvent: DixitRoundCardPlayingEvent = event as DixitRoundCardPlayingEvent;
-                    const {
-                        rounds,
-                        roundState,
-                        story,
-                        playCards
-                    }: DixitRoundCardPlayingEvent = dixitRoundCardPlayingEvent;
+                if (event instanceof DixitRoundCardPlayedEvent) {
+                    const cardPlayedEvent: DixitRoundCardPlayedEvent = event as DixitRoundCardPlayedEvent;
+                    const {rounds, roundState, story, playCards}: DixitRoundCardPlayedEvent = cardPlayedEvent;
                     setDixitOverview((dixitOverview: DixitOverview) => {
                         return {...dixitOverview, rounds, roundState, story, playCards};
                     });
-                    dixitService.onEventHandled(dixitRoundCardPlayingEvent);
+                    dixitService.onEventHandled(cardPlayedEvent);
                 }
             }
         }
 
-        const onDixitPlayerGuessing = {
+        const onDixitStoryGuessed = {
             handleEvent: (event: Event) => {
-                if (event instanceof DixitRoundPlayerGuessingEvent) {
-                    const dixitPlayerGuessingEvent: DixitRoundPlayerGuessingEvent = event as DixitRoundPlayerGuessingEvent;
+                if (event instanceof DixitRoundStoryGuessedEvent) {
+                    const storyGuessedEvent: DixitRoundStoryGuessedEvent = event as DixitRoundStoryGuessedEvent;
                     const isStoryTeller: boolean = playerId === storyteller?.id;
-                    if (isStoryTeller || dixitPlayerGuessingEvent.guesses.find(({guesser}: Guess) => guesser.id === playerId)) {
-                        onPlayerGuessing(dixitPlayerGuessingEvent);
+                    if (isStoryTeller || storyGuessedEvent.guesses.find(({guesser}: Guess) => guesser.id === playerId)) {
+                        onStoryGuessed(storyGuessedEvent);
                     } else {
-                        delay(delayTime, () => onPlayerGuessing(dixitPlayerGuessingEvent));
+                        delay(delayTime, () => onStoryGuessed(storyGuessedEvent));
                     }
                 }
             }
         }
 
-        const onPlayerGuessing = (dixitPlayerGuessingEvent: DixitRoundPlayerGuessingEvent) => {
-            const {rounds, roundState, playCards, guesses}: DixitRoundPlayerGuessingEvent = dixitPlayerGuessingEvent;
+        const onStoryGuessed = (storyGuessedEvent: DixitRoundStoryGuessedEvent) => {
+            const {rounds, roundState, playCards, guesses}: DixitRoundStoryGuessedEvent = storyGuessedEvent;
             setDixitOverview((dixitOverview: DixitOverview) => {
                 return {...dixitOverview, rounds, roundState, playCards, guesses};
             });
-            dixitService.onEventHandled(dixitPlayerGuessingEvent);
+            dixitService.onEventHandled(storyGuessedEvent);
         }
 
-        const onDixitScoring = {
+        const onDixitScored = {
             handleEvent: (event: Event) => {
-                if (event instanceof DixitRoundScoringEvent) {
-                    delay(delayTime, () => onScoring(event as DixitRoundScoringEvent));
+                if (event instanceof DixitRoundScoredEvent) {
+                    delay(delayTime, () => onScored(event as DixitRoundScoredEvent));
                 }
             }
         }
 
-        const onScoring = (dixitScoringEvent: DixitRoundScoringEvent) => {
-            const {roundState, players}: DixitRoundScoringEvent = dixitScoringEvent;
+        const onScored = (scoredEvent: DixitRoundScoredEvent) => {
+            const {roundState, players}: DixitRoundScoredEvent = scoredEvent;
             setDixitOverview((dixitOverview: DixitOverview) => {
                 return {
                     ...dixitOverview,
@@ -117,14 +112,14 @@ const Playground = () => {
                     players: players.sort((playerA, playerB) => playerA.score === playerB.score ? playerA.id.localeCompare(playerB.id) : playerB.score - playerA.score)
                 };
             });
-            dixitService.onEventHandled(dixitScoringEvent);
+            dixitService.onEventHandled(scoredEvent);
         }
 
         const onDixitGameOver = {
             handleEvent: (event: Event) => {
                 if (event instanceof DixitGameOverEvent) {
-                    const dixitGameOverEvent: DixitGameOverEvent = event as DixitGameOverEvent;
-                    const {gameState, winners}: DixitGameOverEvent = dixitGameOverEvent;
+                    const gameOverEvent: DixitGameOverEvent = event as DixitGameOverEvent;
+                    const {gameState, winners}: DixitGameOverEvent = gameOverEvent;
                     setDixitOverview((dixitOverview: DixitOverview) => {
                         return {
                             ...dixitOverview,
@@ -132,17 +127,16 @@ const Playground = () => {
                             winners: winners.sort((winnerA, winnerB) => winnerA.score === winnerB.score ? winnerA.id.localeCompare(winnerB.id) : winnerB.score - winnerA.score)
                         };
                     });
-                    dixitService.onEventHandled(dixitGameOverEvent);
+                    dixitService.onEventHandled(gameOverEvent);
                 }
             }
         }
 
-
         dixitService.subscribeToDixitGameStartedEvent(dixitId, playerId, onDixitGameStarted);
-        dixitService.subscribeToDixitStoryTellingEvent(dixitId, playerId, onDixitStoryTelling);
-        dixitService.subscribeToDixitCardPlayingEvent(dixitId, playerId, onDixitCardPlaying);
-        dixitService.subscribeToDixitPlayerGuessingEvent(dixitId, playerId, onDixitPlayerGuessing);
-        dixitService.subscribeToDixitScoringEvent(dixitId, playerId, onDixitScoring);
+        dixitService.subscribeToDixitRoundStoryToldEvent(dixitId, playerId, onDixitStoryTold);
+        dixitService.subscribeToDixitRoundCardPlayedEvent(dixitId, playerId, onDixitCardPlayed);
+        dixitService.subscribeToDixitRoundStoryGuessedEvent(dixitId, playerId, onDixitStoryGuessed);
+        dixitService.subscribeToDixitRoundScoredEvent(dixitId, playerId, onDixitScored);
         dixitService.subscribeToDixitGameOverEvent(dixitId, playerId, onDixitGameOver);
 
     }, [dixitId, playerId, setDixitOverview, storyteller]);
@@ -158,14 +152,14 @@ const Playground = () => {
         };
     }, [subscribeEvents, unsubscribeEvents]);
 
-    if (GAME_OVER === gameState) {
+    if (OVER === gameState) {
         return <DixitRanking/>;
     } else if (STORY_TELLING === roundState) {
-        return <StoryTelling/>;
+        return <DixitStoryTelling/>;
     } else if (CARD_PLAYING === roundState) {
-        return <CardPlaying/>;
-    } else if (PLAYER_GUESSING === roundState) {
-        return <PlayerGuessing/>;
+        return <DixitCardPlaying/>;
+    } else if (STORY_GUESSING === roundState) {
+        return <DixitStoryGuessing/>;
     } else if (SCORING === roundState) {
         return <DixitScoring/>;
     } else {

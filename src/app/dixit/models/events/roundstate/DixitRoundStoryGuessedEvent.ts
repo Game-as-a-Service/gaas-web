@@ -3,7 +3,7 @@ import Event from "../Event";
 import {RoundState} from "../../model/RoundState";
 import Guess from "../../model/Guess";
 
-export default class DixitRoundPlayerGuessingEvent extends Event {
+export default class DixitRoundStoryGuessedEvent extends Event {
     public readonly roundState: RoundState;
     public readonly playCards: Array<PlayCard>;
     public readonly guesses: Array<Guess>;

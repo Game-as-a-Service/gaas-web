@@ -2,7 +2,7 @@ import Event from "../Event";
 import {RoundState} from "../../model/RoundState";
 import Player from "../../model/Player";
 
-export default class DixitRoundScoringEvent extends Event {
+export default class DixitRoundScoredEvent extends Event {
     public readonly roundState: RoundState;
     public readonly players: Array<Player>
 

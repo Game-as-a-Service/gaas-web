@@ -3,7 +3,7 @@ import {RoundState} from "../../model/RoundState";
 import Story from "../../model/Story";
 import PlayCard from "../../model/PlayCard";
 
-export default class DixitRoundCardPlayingEvent extends Event {
+export default class DixitRoundCardPlayedEvent extends Event {
     public readonly roundState: RoundState;
     public readonly story: Story;
     public readonly playCards: Array<PlayCard>;
