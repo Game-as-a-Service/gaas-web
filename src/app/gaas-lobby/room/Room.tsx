@@ -81,7 +81,7 @@ const Room = () => {
     return <>
         <div className="passcode-banner">
             <div className="passcode">PassCode</div>
-            <div className="passcode-content">{localStorage.getItem('passCode')}</div>
+            <div className="passcode-content">{room?.passCode}</div>
         </div>
 
         <div className="room-space columns">

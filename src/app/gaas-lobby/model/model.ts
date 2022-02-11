@@ -2,14 +2,15 @@ class Game {
 	constructor(
 		public readonly id: string,
 		public readonly name: string,
-		public readonly domain: string) {
+		public readonly serviceHost: string) {
 	}
 }
 
 class GameRoom {
 	constructor(
-        public readonly roomId: string,
+        public readonly id: string,
         public readonly hostId: string,
+		  public readonly passCode: string,
         public players: Player[]) {
 	}
 }
