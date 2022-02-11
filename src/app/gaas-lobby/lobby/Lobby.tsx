@@ -62,15 +62,12 @@ const Lobby = () => {
    const onCreateRoom = (nickName: string) => {
       roomService.createRoom(nickName)
          .then(data => {
-            console.log(data);
             localStorage.setItem('playerId', data.playerId);
             history.push({pathname: `/rooms/${data.room.id}`});
          })
-         .catch(() => {console.log("fail")});
    };
 
    const onJoinRoom = (passCode: string, nickName: string) => {
-      console.log(passCode, nickName);
       roomService.joinRoom(passCode, nickName)
          .then(data => {
             localStorage.setItem('playerId', data.playerId);

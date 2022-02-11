@@ -8,11 +8,11 @@ import {Game, GameRoom, Player} from '../model/model';
 import roomService from "../service/RoomService";
 import {ensure} from "../utils/utils";
 
-const PlayerTag = ({name, host, ready}: Player) => {
+const PlayerTag = ({player}: {player: Player}) => {
     return <div className="player-tag">
-        {host ? <RiVipCrownFill color="F2B749" style={{marginRight: '3px'}}/> : ''}
-        <span>{name}</span>
-        {ready ? <BsCheckLg color="CAE01F" style={{marginLeft: '3px'}}/> : ''}
+        {player.host ? <RiVipCrownFill color="F2B749" style={{marginRight: '3px'}}/> : ''}
+        <span>{player.name}</span>
+        {player.ready ? <BsCheckLg color="CAE01F" style={{marginLeft: '3px'}}/> : ''}
     </div>;
 };
 
@@ -31,7 +31,7 @@ interface Message {
 const Room = () => {
     const history = useHistory();
     const {roomId} = useParams<{ roomId: string }>();
-    const playerId = localStorage.getItem('playerId');
+    const playerId = ensure(localStorage.getItem('playerId'));
     const [ready, setReady] = useState(false);
     const [host, setHost] = useState(false);
     const [room, setRoom] = useState<undefined | GameRoom>(undefined);
@@ -69,13 +69,12 @@ const Room = () => {
 
     const onStartGame = () => {
         const gameId : string = '2';
-        roomService.startGame(roomId, playerId, gameId)
-            .then(setGame)
-            .then(() => {
-                history.push({
-                    pathname: `/${game?.name}/${gameId}`,
-                });
-            });
+        if (host) {
+            roomService.startGame(roomId, playerId, gameId)
+               .then(setGame)
+               .then(() => {history.push({pathname: `/${game?.name}/${gameId}`});
+               });
+        }
     };
 
     return <>
@@ -95,8 +94,7 @@ const Room = () => {
                     </div>
                 </div>
                 <div className="player-list">
-                    {room?.players.map((p: Player) =>
-                        <PlayerTag key={p.id} name={p.name} host={p.host} ready={p.ready} id={''}/>)}
+                    {room?.players.map((p: Player) => <PlayerTag player={p}/>)}
                 </div>
                 <div className="align-bottom">
                     <button className="room-btn" onClick={onLeaveRoom}>Leave</button>
