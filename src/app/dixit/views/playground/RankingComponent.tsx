@@ -1,18 +1,15 @@
 import React from "react";
 import {OVER} from "../../models/model/GameState";
-import {DixitContextValue, useDixitContext} from "../Dixit";
+import {DixitContextValue, useDixitContext} from "../DixitComponent";
 import DixitOverview from "../../models/DixitOverview";
-import ScoreBoard from "../exhibition/ScoreBoard";
+import ScoreBoardComponent from "../scoreboard/ScoreBoardComponent";
 
-const DixitRanking = () => {
+const RankingComponent = () => {
     const {dixitOverview}: DixitContextValue = useDixitContext();
     const {gameState, winners}: DixitOverview = dixitOverview;
 
     const isGameOver: boolean = OVER === gameState;
-    if (isGameOver) {
-        return <ScoreBoard players={winners}/>;
-    }
-    return <></>;
+    return isGameOver ? <ScoreBoardComponent players={winners}/> : <></>;
 }
 
-export default DixitRanking;
+export default RankingComponent;

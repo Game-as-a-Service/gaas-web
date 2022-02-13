@@ -1,9 +1,9 @@
-import './Dixit.scss';
+import './DixitComponent.scss';
 import React, {createContext, useCallback, useContext, useEffect, useState} from "react";
-import PlayerBar from "./playerbar/PlayerBar";
+import PlayerBarComponent from "./playerbar/PlayerBarComponent";
 import {dixitService} from "../services/services";
 import DixitOverview from "../models/DixitOverview";
-import Playground from "./Playground";
+import PlaygroundComponent from "./playground/PlaygroundComponent";
 import {useParams} from "react-router-dom";
 
 type DixitOverviewState = DixitOverview | ((prevDixitOverview: DixitOverview) => DixitOverview);
@@ -26,7 +26,7 @@ export const useDixitContext = () => {
     return useContext(DixitContext);
 };
 
-const Dixit = () => {
+const DixitComponent = () => {
     const {gameId} = useParams<{ gameId: string }>();
     const port: string = window.location.port;
     const playerId: string = port.charAt(port.length - 1);
@@ -48,12 +48,14 @@ const Dixit = () => {
 
     return (
         <DixitContext.Provider value={dixitContext}>
-            <div className="dixit">
-                <PlayerBar/>
-                <Playground/>
+            <div className="playground-position">
+                <PlaygroundComponent/>
+            </div>
+            <div className="player-bar-position">
+                <PlayerBarComponent/>
             </div>
         </DixitContext.Provider>
     );
 }
 
-export default Dixit;
+export default DixitComponent;

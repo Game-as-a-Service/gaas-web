@@ -1,0 +1,19 @@
+.storytelling-component-position {
+  display: flex;
+  justify-content: center;
+
+  .notification-position {
+    position: absolute;
+    top: 30%;
+  }
+
+  .description-position {
+    position: absolute;
+    top: 5%;
+  }
+
+  .handCards-position {
+    position: absolute;
+    bottom: 5%;
+  }
+}

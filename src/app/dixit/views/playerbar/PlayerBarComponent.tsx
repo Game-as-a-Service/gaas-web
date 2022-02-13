@@ -1,10 +1,10 @@
-import './PlayerBar.scss';
-import Logo from "../logo/Logo";
+import './PlayerBarComponent.scss';
+import LogoComponent from "../logo/LogoComponent";
 import Player from "../../models/model/Player";
 import React from "react";
-import {DixitContextValue, useDixitContext} from "../Dixit";
+import {DixitContextValue, useDixitContext} from "../DixitComponent";
 
-const PlayerBar = () => {
+const PlayerBarComponent = () => {
     const {dixitOverview}: DixitContextValue = useDixitContext();
 
     const PlayerItem = ({player}: { player: Player }) => {
@@ -18,8 +18,8 @@ const PlayerBar = () => {
 
     return (
         <div className="player-bar">
-            <div className="logo-bar">
-                <Logo/>
+            <div className="logo-position">
+                <LogoComponent/>
             </div>
             {
                 dixitOverview.players.map(player => <PlayerItem player={player}/>)
@@ -28,4 +28,4 @@ const PlayerBar = () => {
     );
 }
 
-export default PlayerBar;
+export default PlayerBarComponent;

@@ -9,7 +9,7 @@ import DixitGameOverEvent from "../models/events/gamestate/DixitGameOverEvent";
 import DixitOverview from "../models/DixitOverview";
 import DixitGameStartedEvent from "../models/events/gamestate/DixitGameStartedEvent";
 import Event from "../models/events/Event";
-import {executeIfExist} from "../utils/DixitUtil";
+import {executeIfExist} from "../utils/DixitUtils";
 import {EventBuffer} from "./EventBuffer";
 import {OVER, STARTED} from "../models/model/GameState";
 import {CARD_PLAYING, SCORING, STORY_GUESSING, STORY_TELLING} from "../models/model/RoundState";

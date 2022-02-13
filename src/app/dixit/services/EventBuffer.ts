@@ -4,7 +4,7 @@ import DixitRoundStoryToldEvent from "../models/events/roundstate/DixitRoundStor
 import DixitRoundCardPlayedEvent from "../models/events/roundstate/DixitRoundCardPlayedEvent";
 import DixitRoundStoryGuessedEvent from "../models/events/roundstate/DixitRoundStoryGuessedEvent";
 import DixitRoundScoredEvent from "../models/events/roundstate/DixitRoundScoredEvent";
-import {generate} from "../utils/DixitUtil";
+import {generate} from "../utils/DixitUtils";
 import Event from "../models/events/Event";
 import DixitGameStartedEvent from "../models/events/gamestate/DixitGameStartedEvent";
 import {DixitEventHandler} from "./DixitService";

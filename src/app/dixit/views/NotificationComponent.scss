@@ -1,21 +1,13 @@
 .notification {
 
-  position: absolute;
-  padding: 8px;
-  height: 140px;
-  left: 410px;
-  top: 185px;
   font-family: Roboto, sans-serif;
   font-style: italic;
   font-weight: bold;
   font-size: 38px;
-  display: flex;
   color: #56776C;
+  display: flex;
   justify-content: center; /* align horizontal */
   align-items: center; /* align vertical */
-  text-align: center;
-
-  // #C4C4C4
 
   border-radius: 180px;
   background-color: #E6DDC6;
