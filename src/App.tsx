@@ -1,7 +1,7 @@
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import {Room} from "./app/gaas-lobby/room/Room";
 import {Lobby} from "./app/gaas-lobby/lobby/Lobby";
-import Dixit from "./app/dixit/views/Dixit";
+import DixitComponent from "./app/dixit/views/DixitComponent";
 
 function App() {
     return (
@@ -9,8 +9,8 @@ function App() {
             <div className='App'>
                 <Switch>
                     <Route path='/' component={Lobby} exact={true}/>
-                    <Route path='/rooms/:roomId' component={Room}/>
-                    <Route path='/dixit/:gameId' component={Dixit}/>
+                    <Route path='/room/:roomId' component={Room}/>
+                    <Route path='/dixit/:gameId' component={DixitComponent}/>
                 </Switch>
             </div>
         </Router>

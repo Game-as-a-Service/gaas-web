@@ -1,19 +1,19 @@
 import React from "react";
 import {FcCancel, FcOk} from "react-icons/fc";
 
-interface CardDecisionProp {
+interface CardDecisionProperties {
     className: string;
     onConfirm: () => void;
     onCancel: () => void;
 }
 
-const CardDecision = ({className, onConfirm, onCancel}: CardDecisionProp) => {
+const CardDecisionComponent = ({className, onConfirm, onCancel}: CardDecisionProperties) => {
     return (
-        <div className={className} style={{width: "330px", height: "105px"}}>
+        <div className={className}>
             <FcOk onClick={onConfirm} style={{width: "40px", height: "40px"}}/>
             <FcCancel onClick={onCancel} style={{width: "40px", height: "40px"}}/>
         </div>
     );
 }
 
-export default CardDecision;
+export default CardDecisionComponent;

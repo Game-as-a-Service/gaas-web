@@ -1,6 +1,6 @@
-import './Logo.scss';
+import './LogoComponent.scss';
 
-const Logo = () => {
+const LogoComponent = () => {
     return (
         <div className="dixit-logo">
             <span className="INDIGO">D</span>
@@ -11,4 +11,4 @@ const Logo = () => {
         </div>
     );
 }
-export default Logo;
+export default LogoComponent;

@@ -1,0 +1,77 @@
+.dixit-score-board-position {
+  display: flex;
+  justify-content: center;
+  margin-top: 10%;
+
+  .dixit-score-board {
+
+    width: 500px;
+    height: 500px;
+    border-radius: 30px;
+
+    font-weight: bold;
+    color: #56776C;
+
+    text-align: center;
+
+    border-spacing: 0;
+    border-collapse: separate;
+
+    .score-board-item-name {
+      background-color: #CFC5A5;
+
+      th {
+        color: #56776C;
+        height: 50px;
+        font-size: 24px;
+        vertical-align: middle;
+      }
+    }
+
+    td {
+      font-size: 26px;
+      vertical-align: middle;
+    }
+
+    tr:first-child th:first-child {
+      border-top-left-radius: 30px;
+    }
+
+    tr:first-child th:last-child {
+      border-top-right-radius: 30px;
+    }
+
+    tr:last-child td:first-child {
+      border-bottom-left-radius: 30px;
+    }
+
+    tr:last-child td:last-child {
+      border-bottom-right-radius: 30px;
+    }
+
+    .RED {
+      background: #F6A9A9;
+    }
+
+    .ORANGE {
+      background: #FFBF86;
+    }
+
+    .YELLOW {
+      background: #FFF47D;
+    }
+
+    .GREEN {
+      background: #C2F784;
+    }
+
+    .BLUE {
+      background: #E4FBFF;
+    }
+
+    .VIOLET {
+      background: #B8B5FF;
+    }
+  }
+
+}

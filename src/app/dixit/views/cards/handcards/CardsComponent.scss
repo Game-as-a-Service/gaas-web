@@ -1,0 +1,51 @@
+.dixit-cards {
+  background: #F0E3CA;
+  border-radius: 30px;
+  display: flex;
+  justify-content: center; /* align horizontal */
+  align-items: center; /* align vertical */
+  padding: 0 10px;
+
+  .basic {
+    width: 100px;
+    height: 150px;
+    margin: 15px 10px;
+    border-radius: 30px;
+  }
+
+  .dixit-card {
+    @extend .basic;
+    border: 4px solid #56776C;
+  }
+
+  .RED {
+    @extend .basic;
+    border: 4px solid  #F6A9A9;
+  }
+
+  .ORANGE {
+    @extend .basic;
+    border: 4px solid  #FFBF86;
+  }
+
+  .YELLOW {
+    @extend .basic;
+    border: 4px solid  #FFF47D;
+  }
+
+  .GREEN {
+    @extend .basic;
+    border: 4px solid  #C2F784;
+  }
+
+  .BLUE {
+    @extend .basic;
+    border: 4px solid  #E4FBFF;
+  }
+
+  .VIOLET {
+    @extend .basic;
+    border: 4px solid  #B8B5FF;
+  }
+
+}

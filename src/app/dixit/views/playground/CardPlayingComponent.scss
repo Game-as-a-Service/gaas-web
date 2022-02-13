@@ -1,0 +1,67 @@
+.card-playing-component-position {
+  display: flex;
+  justify-content: center;
+
+  .notification-position {
+    position: absolute;
+    top: 30%;
+  }
+
+  .description-position {
+    position: absolute;
+    top: 5%;
+  }
+
+  .handCards-position {
+    position: absolute;
+    bottom: 5%;
+  }
+
+  .dixit-playCards {
+    display: flex;
+    margin-top: 10%;
+
+    .dixit-playCard {
+      width: 140px;
+      height: 210px;
+      border-radius: 30px;
+      margin: 0 15px;
+      color: #596C68;
+      text-align: center;
+      font-family: Roboto, sans-serif;
+      font-weight: bold;
+      font-size: 30px;
+      line-height: 210px;
+    }
+
+    .RED {
+      @extend .dixit-playCard;
+      background: #F6A9A9;
+    }
+
+    .ORANGE {
+      @extend .dixit-playCard;
+      background: #FFBF86;
+    }
+
+    .YELLOW {
+      @extend .dixit-playCard;
+      background: #FFF47D;
+    }
+
+    .GREEN {
+      @extend .dixit-playCard;
+      background: #C2F784;
+    }
+
+    .BLUE {
+      @extend .dixit-playCard;
+      background: #E4FBFF;
+    }
+
+    .VIOLET {
+      @extend .dixit-playCard;
+      background: #B8B5FF;
+    }
+  }
+}

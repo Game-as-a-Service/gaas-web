@@ -1,25 +1,25 @@
 import React, {useCallback, useEffect} from "react";
-import DixitStoryTelling from "./actions/StoryTelling";
-import DixitCardPlaying from "./actions/CardPlaying";
-import DixitStoryGuessing from "./actions/PlayerGuessing";
-import DixitScoring from "./actions/DixitScoring";
-import DixitRanking from "./actions/DixitRanking";
-import {DixitContextValue, useDixitContext} from "./Dixit";
-import {dixitService} from "../services/services";
-import Event from "../models/events/Event";
-import DixitRoundScoredEvent from "../models/events/roundstate/DixitRoundScoredEvent";
-import DixitOverview from "../models/DixitOverview";
-import DixitRoundStoryToldEvent from "../models/events/roundstate/DixitRoundStoryToldEvent";
-import DixitGameStartedEvent from "../models/events/gamestate/DixitGameStartedEvent";
-import DixitRoundCardPlayedEvent from "../models/events/roundstate/DixitRoundCardPlayedEvent";
-import DixitRoundStoryGuessedEvent from "../models/events/roundstate/DixitRoundStoryGuessedEvent";
-import DixitGameOverEvent from "../models/events/gamestate/DixitGameOverEvent";
-import {OVER} from "../models/model/GameState";
-import {CARD_PLAYING, SCORING, STORY_GUESSING, STORY_TELLING} from "../models/model/RoundState";
-import {delay} from "../utils/DixitUtil";
-import Guess from "../models/model/Guess";
+import StoryTellingComponent from "./StoryTellingComponent";
+import CardPlayingComponent from "./CardPlayingComponent";
+import StoryGuessingComponent from "./StoryGuessingComponent";
+import ScoringComponent from "./ScoringComponent";
+import RankingComponent from "./RankingComponent";
+import {DixitContextValue, useDixitContext} from "../DixitComponent";
+import {dixitService} from "../../services/services";
+import Event from "../../models/events/Event";
+import DixitRoundScoredEvent from "../../models/events/roundstate/DixitRoundScoredEvent";
+import DixitOverview from "../../models/DixitOverview";
+import DixitRoundStoryToldEvent from "../../models/events/roundstate/DixitRoundStoryToldEvent";
+import DixitGameStartedEvent from "../../models/events/gamestate/DixitGameStartedEvent";
+import DixitRoundCardPlayedEvent from "../../models/events/roundstate/DixitRoundCardPlayedEvent";
+import DixitRoundStoryGuessedEvent from "../../models/events/roundstate/DixitRoundStoryGuessedEvent";
+import DixitGameOverEvent from "../../models/events/gamestate/DixitGameOverEvent";
+import {OVER} from "../../models/model/GameState";
+import {CARD_PLAYING, SCORING, STORY_GUESSING, STORY_TELLING} from "../../models/model/RoundState";
+import {delay} from "../../utils/DixitUtils";
+import Guess from "../../models/model/Guess";
 
-const Playground = () => {
+const PlaygroundComponent = () => {
     const {dixitId, playerId, dixitOverview, setDixitOverview}: DixitContextValue = useDixitContext();
     const {gameState, roundState, storyteller}: DixitOverview = dixitOverview;
     const delayTime: number = 1500;
@@ -153,18 +153,18 @@ const Playground = () => {
     }, [subscribeEvents, unsubscribeEvents]);
 
     if (OVER === gameState) {
-        return <DixitRanking/>;
+        return <RankingComponent/>;
     } else if (STORY_TELLING === roundState) {
-        return <DixitStoryTelling/>;
+        return <StoryTellingComponent/>;
     } else if (CARD_PLAYING === roundState) {
-        return <DixitCardPlaying/>;
+        return <CardPlayingComponent/>;
     } else if (STORY_GUESSING === roundState) {
-        return <DixitStoryGuessing/>;
+        return <StoryGuessingComponent/>;
     } else if (SCORING === roundState) {
-        return <DixitScoring/>;
+        return <ScoringComponent/>;
     } else {
         return <></>;
     }
 }
 
-export default Playground;
+export default PlaygroundComponent;
