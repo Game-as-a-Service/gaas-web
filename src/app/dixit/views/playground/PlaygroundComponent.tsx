@@ -5,7 +5,6 @@ import StoryGuessingComponent from "./StoryGuessingComponent";
 import ScoringComponent from "./ScoringComponent";
 import RankingComponent from "./RankingComponent";
 import {DixitContextValue, useDixitContext} from "../DixitComponent";
-import {dixitService} from "../../services/services";
 import Event from "../../models/events/Event";
 import DixitRoundScoredEvent from "../../models/events/roundstate/DixitRoundScoredEvent";
 import DixitOverview from "../../models/DixitOverview";
@@ -18,14 +17,14 @@ import {OVER} from "../../models/model/GameState";
 import {CARD_PLAYING, SCORING, STORY_GUESSING, STORY_TELLING} from "../../models/model/RoundState";
 import {delay} from "../../utils/DixitUtils";
 import Guess from "../../models/model/Guess";
+import {DixitService} from "../../services/DixitService";
 
-const PlaygroundComponent = () => {
+const PlaygroundComponent = ({dixitService}: { dixitService: DixitService }) => {
     const {dixitId, playerId, dixitOverview, setDixitOverview}: DixitContextValue = useDixitContext();
     const {gameState, roundState, storyteller}: DixitOverview = dixitOverview;
     const delayTime: number = 1500;
 
     const subscribeEvents = useCallback(() => {
-
         const onDixitGameStarted = {
             handleEvent: (event: Event) => {
                 if (event instanceof DixitGameStartedEvent) {
@@ -138,12 +137,11 @@ const PlaygroundComponent = () => {
         dixitService.subscribeToDixitRoundStoryGuessedEvent(dixitId, playerId, onDixitStoryGuessed);
         dixitService.subscribeToDixitRoundScoredEvent(dixitId, playerId, onDixitScored);
         dixitService.subscribeToDixitGameOverEvent(dixitId, playerId, onDixitGameOver);
-
-    }, [dixitId, playerId, setDixitOverview, storyteller]);
+    }, [dixitId, dixitService, playerId, setDixitOverview, storyteller?.id]);
 
     const unsubscribeEvents = useCallback(() => {
         dixitService.clearSubscriptions();
-    }, []);
+    }, [dixitService]);
 
     useEffect(() => {
         subscribeEvents();
@@ -155,11 +153,11 @@ const PlaygroundComponent = () => {
     if (OVER === gameState) {
         return <RankingComponent/>;
     } else if (STORY_TELLING === roundState) {
-        return <StoryTellingComponent/>;
+        return <StoryTellingComponent dixitService={dixitService}/>;
     } else if (CARD_PLAYING === roundState) {
-        return <CardPlayingComponent/>;
+        return <CardPlayingComponent dixitService={dixitService}/>;
     } else if (STORY_GUESSING === roundState) {
-        return <StoryGuessingComponent/>;
+        return <StoryGuessingComponent dixitService={dixitService}/>;
     } else if (SCORING === roundState) {
         return <ScoringComponent/>;
     } else {

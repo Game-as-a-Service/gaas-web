@@ -3,14 +3,14 @@ import Card from "../../models/model/Card";
 import NotificationComponent from "../NotificationComponent";
 import PlayCardsComponent from "../cards/handcards/PlayCardsComponent";
 import {GuessDescriptionComponent} from "../cards/descriptions/CardDescriptionComponent";
-import {dixitService} from "../../services/services";
 import {DixitContextValue, useDixitContext} from "../DixitComponent";
 import DixitOverview from "../../models/DixitOverview";
 import PlayCard from "../../models/model/PlayCard";
 import Guess from "../../models/model/Guess";
 import './StoryGuessingComponent.scss';
+import {DixitService} from "../../services/DixitService";
 
-const StoryGuessingComponent = () => {
+const StoryGuessingComponent = ({dixitService}: { dixitService: DixitService }) => {
     const {dixitId, playerId, dixitOverview}: DixitContextValue = useDixitContext();
     const {rounds, storyteller, playCards, guesses}: DixitOverview = dixitOverview;
     const [selectedCard, setSelectedCard] = useState<Card | undefined>(undefined);

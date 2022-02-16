@@ -3,12 +3,12 @@ import {StoryDescriptionComponent} from "../cards/descriptions/CardDescriptionCo
 import Card from "../../models/model/Card";
 import NotificationComponent from "../NotificationComponent";
 import HandCardsComponent from "../cards/handcards/HandCardsComponent";
-import {dixitService} from "../../services/services";
 import {DixitContextValue, useDixitContext} from "../DixitComponent";
 import DixitOverview from "../../models/DixitOverview";
 import './StoryTellingComponent.scss';
+import {DixitService} from "../../services/DixitService";
 
-const StoryTellingComponent = () => {
+const StoryTellingComponent = ({dixitService}: { dixitService: DixitService }) => {
     const {dixitId, playerId, dixitOverview}: DixitContextValue = useDixitContext();
     const {rounds, handCards, storyteller}: DixitOverview = dixitOverview;
     const [selectedCard, setSelectedCard] = useState<Card | undefined>(undefined);
