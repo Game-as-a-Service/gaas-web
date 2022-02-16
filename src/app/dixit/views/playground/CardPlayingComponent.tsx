@@ -3,13 +3,13 @@ import React, {useState} from "react";
 import Card from "../../models/model/Card";
 import NotificationComponent from "../NotificationComponent";
 import HandCardsComponent from "../cards/handcards/HandCardsComponent";
-import {dixitService} from "../../services/services";
 import {DixitContextValue, useDixitContext} from "../DixitComponent";
 import DixitOverview from "../../models/DixitOverview";
 import PlayCard from "../../models/model/PlayCard";
 import './CardPlayingComponent.scss';
+import {DixitService} from "../../services/DixitService";
 
-const CardPlayingComponent = () => {
+const CardPlayingComponent = ({dixitService}: { dixitService: DixitService }) => {
     const {dixitId, playerId, dixitOverview}: DixitContextValue = useDixitContext();
     const {rounds, handCards, storyteller, story, playCards}: DixitOverview = dixitOverview;
     const [selectedCard, setSelectedCard] = useState<Card | undefined>(undefined);
@@ -57,7 +57,8 @@ const CardPlayingComponent = () => {
                                         </div>
                                         :
                                         <div className="notification-position">
-                                            <NotificationComponent message={isStoryTeller ? `其他玩家正在打牌` : `你是玩家，請打出與謎語相似的牌`}/>
+                                            <NotificationComponent
+                                                message={isStoryTeller ? `其他玩家正在打牌` : `你是玩家，請打出與謎語相似的牌`}/>
                                         </div>
                                 }
                                 <div className="handCards-position">

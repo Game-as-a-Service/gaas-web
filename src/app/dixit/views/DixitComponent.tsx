@@ -1,10 +1,11 @@
 import './DixitComponent.scss';
-import React, {createContext, useCallback, useContext, useEffect, useState} from "react";
+import React, {createContext, useCallback, useContext, useEffect, useMemo, useState} from "react";
 import PlayerBarComponent from "./playerbar/PlayerBarComponent";
-import {dixitService} from "../services/services";
 import DixitOverview from "../models/DixitOverview";
 import PlaygroundComponent from "./playground/PlaygroundComponent";
-import {useParams} from "react-router-dom";
+import {useHistory, useParams} from "react-router-dom";
+import {DixitService} from "../services/DixitService";
+import {Game} from "../../gaas-lobby/model/model";
 
 type DixitOverviewState = DixitOverview | ((prevDixitOverview: DixitOverview) => DixitOverview);
 
@@ -12,7 +13,7 @@ export interface DixitContextValue {
     dixitId: string,
     playerId: string,
     dixitOverview: DixitOverview,
-    setDixitOverview: (dixitOverviewState: DixitOverviewState) => void;
+    setDixitOverview: (dixitOverviewState: DixitOverviewState) => void
 }
 
 export const DixitContext = createContext<DixitContextValue>({
@@ -28,10 +29,12 @@ export const useDixitContext = () => {
 
 const DixitComponent = () => {
     const {gameId} = useParams<{ gameId: string }>();
-    const port: string = window.location.port;
-    const playerId: string = port.charAt(port.length - 1);
+    const history = useHistory<{ playerId: string, game: Game }>();
+    const playerId: string = history.location.state.playerId;
+    const game: Game = history.location.state.game;
     const [dixitOverview, setDixitOverview] = useState<DixitOverview>(DixitOverview.defaultDixitOverview);
-    const dixitContext: DixitContextValue = {dixitId: gameId, playerId, dixitOverview, setDixitOverview};
+    const dixitService: DixitService = useMemo<DixitService>(() => new DixitService(game.serviceHost), [game.serviceHost]);
+
     const dixitConnectCallback = useCallback(() => {
         dixitService.getDixitOverview(gameId, playerId)
             .then((dixitOverview) => {
@@ -40,16 +43,22 @@ const DixitComponent = () => {
                 setDixitOverview(dixitOverview);
             })
             .catch(() => dixitService.initializeDixit());
-    }, [setDixitOverview, gameId, playerId]);
+    }, [dixitService, gameId, playerId]);
+
+    useEffect(() => {
+        if (dixitOverview === DixitOverview.defaultDixitOverview) {
+            dixitConnectCallback();
+        }
+    }, [dixitOverview, dixitConnectCallback]);
 
     useEffect(() => {
         dixitService.dixitConnectCallback = dixitConnectCallback;
-    }, [dixitConnectCallback]);
+    }, [dixitService, dixitConnectCallback]);
 
     return (
-        <DixitContext.Provider value={dixitContext}>
+        <DixitContext.Provider value={{dixitId: gameId, playerId, dixitOverview, setDixitOverview}}>
             <div className="playground-position">
-                <PlaygroundComponent/>
+                <PlaygroundComponent dixitService={dixitService}/>
             </div>
             <div className="player-bar-position">
                 <PlayerBarComponent/>
