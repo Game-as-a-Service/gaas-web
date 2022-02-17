@@ -132,7 +132,7 @@ const Room = () => {
                 }
             }
         });
-    }, [history, playerId, roomId]);
+    }, [history, host, playerId, roomId]);
 
     const unsubscribeEvents = useCallback(() => {
         roomService.clearSubscriptions();
