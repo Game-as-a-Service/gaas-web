@@ -6,7 +6,6 @@ import {useCallback, useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
 import {Game, GameRoom, Player} from '../model/model';
 import {Option, roomService} from "../service/RoomService";
-import {ensure} from "../utils/utils";
 import {GameStartedEvent, RoomPlayerJoinedEvent, RoomPlayerLeftEvent, RoomPlayerReadiedEvent} from "../model/events";
 
 const PlayerTag = ({player}: { player: Player }) => {
@@ -33,16 +32,14 @@ const Room = () => {
     const history = useHistory<{ playerId: string, room: GameRoom } | { playerId: string, game: Game }>();
     const {roomId} = useParams<{ roomId: string }>();
     const playerId = history.location.state.playerId;
-    const [ready, setReady] = useState(false);
-    const [host, setHost] = useState(false);
     const [room, setRoom] = useState<undefined | GameRoom>();
+    const [player, setPlayer] = useState<undefined | Player>();
 
     const fetchRoom = useCallback(() => {
         roomService.getRoom(roomId)
             .then(room => {
                 setRoom(room);
-                setReady(ensure(room.players.find(p => playerId === p.id)).ready);
-                setHost(room.hostId === playerId);
+                setPlayer(room.players.find(p => playerId === p.id));
             })
             .catch(() => console.log(`${roomId} Not Found`));
     }, [playerId, roomId]);
@@ -51,7 +48,19 @@ const Room = () => {
         if (!room) {
             fetchRoom();
         }
-    });
+    }, [room, fetchRoom]);
+
+    useEffect(() => {
+        if (room && player) {
+            const playerIndex = room.players.findIndex(p => p.id === player.id);
+            room.players[playerIndex] = player;
+            setRoom(room => room ? {...room} : room);
+        }
+    }, [room, player, setRoom])
+
+    useEffect(() => {
+        roomService.lobbyConnectCallback = fetchRoom;
+    }, [fetchRoom]);
 
     const onLeaveRoom = () => {
         roomService.leaveRoom(roomId, playerId)
@@ -59,13 +68,14 @@ const Room = () => {
     };
 
     const onReady = () => {
+        const ready = player?.ready;
         roomService.ready(roomId, playerId, !ready)
-            .then(() => setReady(!ready))
+            .then(() => setPlayer(player ? {...player, ready: !ready} : player))
             .catch(err => console.log(err));
     };
 
     const onStartGame = () => {
-        if (host) {
+        if (playerId === room?.hostId) {
             const options = [new Option('winningScore', 30)];
             roomService.startGame(roomId, playerId, options)
                 .then(({gameId, gameName, gameServiceHost}) => history.push({
@@ -94,12 +104,10 @@ const Room = () => {
                 if (playerId === player.id) {
                     history.goBack();
                 } else {
-                    setRoom(room => {
-                        if (room && room.players.find(p => p.id === player.id)) {
-                            return {...room, players: room.players.filter(p => p.id !== player.id)};
-                        }
-                        return room;
-                    });
+                    setRoom(room => room?.players.find(p => p.id === player.id) ? {
+                        ...room,
+                        players: room.players.filter(p => p.id !== player.id)
+                    } : room);
                 }
             }
         });
@@ -111,6 +119,7 @@ const Room = () => {
                         if (room) {
                             const playerIndex = room.players.findIndex(p => p.id === player.id);
                             room.players[playerIndex] = player;
+                            player.host = player.id === room.hostId;
                             return {...room};
                         }
                         return room;
@@ -121,7 +130,7 @@ const Room = () => {
 
         roomService.subscribeToGameStartedEvent(roomId, {
             handleEvent({gameId, gameName, gameServiceHost}: GameStartedEvent): void {
-                if (!host) {
+                if (playerId !== room?.hostId) {
                     history.push({
                         pathname: `../../${gameName}/${gameId}`,
                         state: {
@@ -132,7 +141,7 @@ const Room = () => {
                 }
             }
         });
-    }, [history, host, playerId, roomId]);
+    }, [history, playerId, roomId, room]);
 
     const unsubscribeEvents = useCallback(() => {
         roomService.clearSubscriptions();
@@ -143,7 +152,8 @@ const Room = () => {
         return () => {
             unsubscribeEvents();
         };
-    }, [subscribeEvents, unsubscribeEvents]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return <>
         <div className="passcode-banner">
@@ -167,9 +177,9 @@ const Room = () => {
                 <div className="align-bottom">
                     <button className="room-btn" onClick={onLeaveRoom}>Leave</button>
                     <button className="room-btn" onClick={onReady}>
-                        {ready ? 'Cancel ready' : 'Get Ready'}
+                        {player?.ready ? 'Cancel ready' : 'Get Ready'}
                     </button>
-                    {host ? <>
+                    {playerId === room?.hostId ? <>
                         <button className="room-btn">Select Game</button>
                         <button className="room-btn" onClick={onStartGame}>Start Game</button>
                     </> : ''}
@@ -183,7 +193,7 @@ const Room = () => {
                 <p className="chat-box-title">Chat Box</p>
                 {
                     room?.players.map(player => <ChatMessage playerName={player.name}
-                                                             message="Hi, Let's play online Dixit Game"/>)
+                                                             message={`Hi, Let's play online ${room?.game ? room?.game.name : "Dixit"} Game`}/>)
                 }
             </div>
         </div>

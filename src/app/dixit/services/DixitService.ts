@@ -9,7 +9,6 @@ import DixitGameOverEvent from "../models/events/gamestate/DixitGameOverEvent";
 import DixitOverview from "../models/DixitOverview";
 import DixitGameStartedEvent from "../models/events/gamestate/DixitGameStartedEvent";
 import Event from "../models/events/Event";
-import {executeIfExist} from "../utils/DixitUtils";
 import {EventBuffer} from "./EventBuffer";
 import {OVER, STARTED} from "../models/model/GameState";
 import {CARD_PLAYING, SCORING, STORY_GUESSING, STORY_TELLING} from "../models/model/RoundState";
@@ -19,21 +18,24 @@ export class DixitService {
     private readonly rxStomp: RxStomp;
     private readonly subscriptions: Array<Subscription>;
     private readonly eventBuffer: EventBuffer;
-    private _dixitConnectCallback?: () => void;
+    public dixitConnectCallback: () => void;
 
     public constructor(dixitServiceHost: string) {
-        this.axios = axios.create({baseURL: dixitServiceHost, timeout: 1000});
+        this.axios = axios.create({baseURL: dixitServiceHost, timeout: 5000});
         this.rxStomp = new RxStomp();
         this.subscriptions = [];
-        this.connect(dixitServiceHost.substr(4, dixitServiceHost.length));
+        this.dixitConnectCallback = () => {
+        };
+        this.connect(dixitServiceHost);
         this.eventBuffer = new EventBuffer();
     }
 
     private connect(serviceHost: string): void {
         const config: RxStompConfig = new RxStompConfig();
-        const dixitServiceHost: string = serviceHost.startsWith(':') ? `ws${serviceHost}` : `w${serviceHost}`;
+        const dixitServiceHost: string = serviceHost.replace('http', 'ws');
         config.brokerURL = `${dixitServiceHost}/broker`;
         config.reconnectDelay = 200;
+        config.connectionTimeout = 5000;
         if (this.rxStomp.active) {
             this.rxStomp.deactivate()
                 .then(r => r);
@@ -41,11 +43,7 @@ export class DixitService {
         this.rxStomp.configure(config);
         this.rxStomp.activate();
         this.rxStomp.connected$
-            .subscribe(() => executeIfExist(this._dixitConnectCallback));
-    }
-
-    public set dixitConnectCallback(dixitConnectCallback: () => void) {
-        this._dixitConnectCallback = dixitConnectCallback;
+            .subscribe(this.dixitConnectCallback);
     }
 
     public getDixitOverview(dixitId: string, playerId: string): Promise<DixitOverview> {

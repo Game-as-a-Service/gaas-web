@@ -148,7 +148,8 @@ const PlaygroundComponent = ({dixitService}: { dixitService: DixitService }) => 
         return () => {
             unsubscribeEvents();
         };
-    }, [subscribeEvents, unsubscribeEvents]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     if (OVER === gameState) {
         return <RankingComponent/>;
