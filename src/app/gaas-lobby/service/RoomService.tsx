@@ -21,28 +21,32 @@ class RoomService {
     private readonly axios: AxiosInstance;
     private readonly rxStomp: RxStomp;
     private readonly subscriptions: Array<Subscription>;
+    public lobbyConnectCallback: () => void;
 
     public constructor() {
         const lobbyServiceHost = process.env.REACT_APP_LOBBY_SVC_BASE_URL as string;
-        this.axios = axios.create({baseURL: lobbyServiceHost, timeout: 1000});
+        this.axios = axios.create({baseURL: lobbyServiceHost, timeout: 5000});
         this.rxStomp = new RxStomp();
         this.subscriptions = [];
-        this.connect(lobbyServiceHost.substr(4, lobbyServiceHost.length));
+        this.lobbyConnectCallback = () => {
+        };
+        this.connect(lobbyServiceHost);
     }
 
     private connect(serviceHost: string): void {
         const config: RxStompConfig = new RxStompConfig();
-        const lobbyServiceHost: string = serviceHost.startsWith(':') ? `ws${serviceHost}` : `w${serviceHost}`;
+        const lobbyServiceHost: string = serviceHost.replace('http', 'ws');
         config.brokerURL = `${lobbyServiceHost}/broker`;
         config.reconnectDelay = 200;
+        config.connectionTimeout = 5000;
         if (this.rxStomp.active) {
             this.rxStomp.deactivate()
                 .then(r => r);
         }
         this.rxStomp.configure(config);
         this.rxStomp.activate();
-        // this.rxStomp.connected$
-        //     .subscribe(() => executeIfExist(this._dixitConnectCallback));
+        this.rxStomp.connected$
+            .subscribe(this.lobbyConnectCallback);
     }
 
     async createRoom(nickName: string) {

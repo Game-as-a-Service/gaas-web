@@ -100,7 +100,6 @@ const Lobby = () => {
     const onCreateRoom = (nickName: string) => {
         roomService.createRoom(nickName)
             .then(({playerId, room}: { playerId: string, room: GameRoom }) => {
-                localStorage.setItem('playerId', playerId);
                 history.push({pathname: `/rooms/${room.id}`, state: {playerId, room}});
             })
     };

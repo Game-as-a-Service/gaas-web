@@ -35,7 +35,7 @@ const DixitComponent = () => {
     const [dixitOverview, setDixitOverview] = useState<DixitOverview>(DixitOverview.defaultDixitOverview);
     const dixitService: DixitService = useMemo<DixitService>(() => new DixitService(game.serviceHost), [game.serviceHost]);
 
-    const dixitConnectCallback = useCallback(() => {
+    const getDixitOverview = useCallback(() => {
         dixitService.getDixitOverview(gameId, playerId)
             .then((dixitOverview) => {
                 dixitOverview.players.sort((playerA, playerB) => playerA.score === playerB.score ? playerA.id.localeCompare(playerB.id) : playerB.score - playerA.score);
@@ -47,13 +47,13 @@ const DixitComponent = () => {
 
     useEffect(() => {
         if (dixitOverview === DixitOverview.defaultDixitOverview) {
-            dixitConnectCallback();
+            getDixitOverview();
         }
-    }, [dixitOverview, dixitConnectCallback]);
+    }, [dixitOverview, getDixitOverview]);
 
     useEffect(() => {
-        dixitService.dixitConnectCallback = dixitConnectCallback;
-    }, [dixitService, dixitConnectCallback]);
+        dixitService.dixitConnectCallback = getDixitOverview;
+    }, [dixitService, getDixitOverview]);
 
     return (
         <DixitContext.Provider value={{dixitId: gameId, playerId, dixitOverview, setDixitOverview}}>
